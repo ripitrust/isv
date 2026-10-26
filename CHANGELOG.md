@@ -8,9 +8,15 @@ evidence that motivated it.
 - verify: every verdict is recorded on the PR in one comment headed `isv verdict: <VERDICT>`:
   each finding from each round with its reviewer, how it was handled (fixed in a commit, or
   dismissed and why), and for NEEDS-HUMAN or RETHINK the briefing. It replaces 0.1.4's
-  briefing-only comment; the labels are unchanged.
+  briefing-only comment.
+- verify, from the review of 0.1.4: NEEDS-HUMAN and RETHINK share one `needs-human` label (the
+  human acts on both; the comment says which), so the documented search finds both; the search is
+  scoped (`--author @me`), because unscoped it spans all of GitHub; MERGE removes the label only
+  when present; RETHINK wins when both verdicts apply.
 - Evidence: the owner looked for the Codex review on two PRs and found nothing. The rounds had
-  run locally, one of them before its PR existed, and the log keeps only counts.
+  run locally, one of them before its PR existed, and the log keeps only counts. A fresh-context
+  review of 0.1.4, which returned after its merge, found the unscoped search and the unfindable
+  RETHINK label.
 
 ## 0.1.4 — 2026-10-26
 

@@ -38,8 +38,7 @@ Classify by the change, not by who asks. When unsure, run `frame`: its first ste
 1. Framing: rule on the decisions `frame` surfaces (target: 3–5 per change, one at a time).
 2. Approve the brief once.
 3. Approve the slice list once.
-4. Approve merges whose verdict is NEEDS-HUMAN (changes touching a configured risk path). Each
-   such PR carries a `needs-human` label and a briefing comment.
+4. Approve merges whose verdict is NEEDS-HUMAN (changes touching a configured risk path).
 5. Release.
 
 Everything else proceeds without asking, unless a stop-the-line condition fires.
@@ -83,8 +82,8 @@ or PRE-EXISTING. Verdicts:
   to the human.
 
 Every verdict is recorded on the PR in one comment: each finding from each round, how it was
-handled, and the verdict. NEEDS-HUMAN and RETHINK add the briefing and a label, so the human can
-list everything waiting on them; MERGE leaves no label.
+handled, and the verdict. NEEDS-HUMAN and RETHINK add the briefing and a `needs-human` label, so
+the human can list everything waiting on them; MERGE leaves no label.
 
 ## Stop the line
 
