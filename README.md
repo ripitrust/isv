@@ -3,7 +3,7 @@
 **Intent → Slice → Verify.** A small development flow for working with coding agents. Four
 skills, one dependency-free CLI, and a local audit log that measures whether the flow helps.
 
-Status: 0.1.4, internal beta. No results are claimed yet; `isv report` exists to produce them.
+Status: 0.1.5, internal beta. No results are claimed yet; `isv report` exists to produce them.
 
 ## What is in it
 
@@ -47,7 +47,8 @@ a shell from the repository root) and returns the reviewer's output and exit cod
 no reviewer is configured or the command is not found, so callers fall back to a subagent, and 1
 when the prompt file or the command line is invalid.
 
-PRs waiting on a human carry a `needs-human` label: `gh search prs --state open --label needs-human`.
+Every reviewed PR carries one `isv verdict:` comment with its findings and how each was handled.
+PRs waiting on a human also carry a `needs-human` label: `gh search prs --state open --label needs-human`.
 
 Guard hook (`.claude/settings.json`):
 

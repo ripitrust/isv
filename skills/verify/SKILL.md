@@ -44,14 +44,17 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
    - **RETHINK**: the round cap is reached with an IMPORTANT finding open → stop, and bring the
      approach question to the human (`isv log stop.line reason=cap`).
 
-6. **Show it where the human looks.** On NEEDS-HUMAN or RETHINK, label the PR and post a comment whose
-   first line is `isv verdict: <VERDICT>`, followed by the briefing (RETHINK: the open finding and the
-   approach question):
+6. **Record it on the PR**, where the human looks. Post one comment, `gh pr comment <n> --body-file
+   <file>`, whose first line is `isv verdict: <VERDICT>`, followed by:
+   - every finding from every round, one line each: round, reviewer, label, what it says with its
+     file:line, and the response (fixed in <commit>, or dismissed and why);
+   - for NEEDS-HUMAN, the briefing; for RETHINK, the open finding and the approach question.
+
+   On NEEDS-HUMAN or RETHINK, also label the PR so the human can find it:
 
    ```
    gh label create <needs-human|rethink> --color D93F0B --force
    gh pr edit <n> --add-label <needs-human|rethink>    # remove the other verdict label if present
-   gh pr comment <n> --body-file <file>
    ```
 
    Say the same in the conversation. On MERGE, remove a verdict label left by an earlier round. The

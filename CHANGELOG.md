@@ -3,6 +3,15 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.1.5 — 2026-10-26
+
+- verify: every verdict is recorded on the PR in one comment headed `isv verdict: <VERDICT>`:
+  each finding from each round with its reviewer, how it was handled (fixed in a commit, or
+  dismissed and why), and for NEEDS-HUMAN or RETHINK the briefing. It replaces 0.1.4's
+  briefing-only comment; the labels are unchanged.
+- Evidence: the owner looked for the Codex review on two PRs and found nothing. The rounds had
+  run locally, one of them before its PR existed, and the log keeps only counts.
+
 ## 0.1.4 — 2026-10-26
 
 - verify: NEEDS-HUMAN and RETHINK are shown on the PR: a `needs-human` or `rethink` label and a

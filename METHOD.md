@@ -1,6 +1,6 @@
 # ISV — Intent → Slice → Verify
 
-Version 0.1.4. A development flow for one human working with coding agents. It aims for
+Version 0.1.5. A development flow for one human working with coding agents. It aims for
 code that is correct, small and understood by the person who owns it, with as few human
 interruptions as that allows.
 
@@ -82,8 +82,9 @@ or PRE-EXISTING. Verdicts:
 - **RETHINK**: the cap was reached with an IMPORTANT finding still open. The approach goes back
   to the human.
 
-NEEDS-HUMAN and RETHINK are posted on the PR as a label and a comment with the briefing, so the
-human can list everything waiting on them; MERGE leaves no label.
+Every verdict is recorded on the PR in one comment: each finding from each round, how it was
+handled, and the verdict. NEEDS-HUMAN and RETHINK add the briefing and a label, so the human can
+list everything waiting on them; MERGE leaves no label.
 
 ## Stop the line
 
