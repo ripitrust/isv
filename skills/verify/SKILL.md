@@ -35,7 +35,8 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
 4. **Rounds:** at most `review.max_rounds` (default 3). From round 2, review only the new diff plus
    still-open IMPORTANT findings.
 
-5. **Verdict** — `isv log verdict pr=<n> verdict=… rounds=<r>`:
+5. **Verdict** — `isv log verdict pr=<n> verdict=… rounds=<r>` (if both NEEDS-HUMAN and RETHINK apply,
+   RETHINK):
    - **MERGE**: no open IMPORTANT finding and no risk path touched → merge per the repository's rules.
    - **NEEDS-HUMAN**: a risk path is touched → write a briefing of at most 15 lines: what changes for
      users, money, data or security, in plain words; a before/after table; what merging triggers (a
@@ -44,18 +45,23 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
    - **RETHINK**: the round cap is reached with an IMPORTANT finding open → stop, and bring the
      approach question to the human (`isv log stop.line reason=cap`).
 
-6. **Show it where the human looks.** On NEEDS-HUMAN or RETHINK, label the PR and post a comment whose
-   first line is `isv verdict: <VERDICT>`, followed by the briefing (RETHINK: the open finding and the
-   approach question):
+6. **Record it on the PR**, where the human looks. Post one comment, `gh pr comment <n> --body-file
+   <file>`, whose first line is `isv verdict: <VERDICT>`, followed by:
+   - every finding from every round, one line each: round, reviewer, label, what it says with its
+     file:line, and the response (fixed in <commit>, or dismissed and why);
+   - for NEEDS-HUMAN, the briefing; for RETHINK, the open finding and the approach question.
+
+   NEEDS-HUMAN and RETHINK both wait on the human, so both get the same label:
 
    ```
-   gh label create <needs-human|rethink> --color D93F0B --force
-   gh pr edit <n> --add-label <needs-human|rethink>    # remove the other verdict label if present
-   gh pr comment <n> --body-file <file>
+   gh label create needs-human --color D93F0B --force
+   gh pr edit <n> --add-label needs-human
    ```
 
-   Say the same in the conversation. On MERGE, remove a verdict label left by an earlier round. The
-   human lists everything waiting on them with `gh search prs --state open --label needs-human`.
+   On MERGE, remove it if an earlier round added it: check `gh pr view <n> --json labels`, then
+   `gh pr edit <n> --remove-label needs-human`. Say the same in the conversation. The human lists
+   everything waiting on them with `gh search prs --state open --label needs-human --author @me`
+   (when agents open PRs under the human's account; otherwise scope it with `--owner <org>`).
 
 On someone else's pull request: run the same review, do not merge, and do not label or comment
 unless the human asks.

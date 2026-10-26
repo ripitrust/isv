@@ -3,7 +3,7 @@
 **Intent → Slice → Verify.** A small development flow for working with coding agents. Four
 skills, one dependency-free CLI, and a local audit log that measures whether the flow helps.
 
-Status: 0.1.4, internal beta. No results are claimed yet; `isv report` exists to produce them.
+Status: 0.1.5, internal beta. No results are claimed yet; `isv report` exists to produce them.
 
 ## What is in it
 
@@ -15,6 +15,9 @@ Status: 0.1.4, internal beta. No results are claimed yet; `isv report` exists to
 | `skills/verify` | Fresh-context, evidence-bound review with a round cap and a verdict |
 | `skills/explain` | Plain-words explanation grounded in the code, one level at a time |
 | `isv` CLI | Event log, report, audit trace, PR checks, templates, a push guard hook |
+
+Every reviewed PR gets one `isv verdict:` comment with its findings and how each was handled. PRs
+waiting on you also get a `needs-human` label: `gh search prs --state open --label needs-human --author @me`.
 
 ## Install
 
@@ -46,8 +49,6 @@ isv guard                               PreToolUse hook: blocks force-push and -
 a shell from the repository root) and returns the reviewer's output and exit code. It exits 3 when
 no reviewer is configured or the command is not found, so callers fall back to a subagent, and 1
 when the prompt file or the command line is invalid.
-
-PRs waiting on a human carry a `needs-human` label: `gh search prs --state open --label needs-human`.
 
 Guard hook (`.claude/settings.json`):
 
