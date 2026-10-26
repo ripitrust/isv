@@ -38,10 +38,24 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
 5. **Verdict** — `isv log verdict pr=<n> verdict=… rounds=<r>`:
    - **MERGE**: no open IMPORTANT finding and no risk path touched → merge per the repository's rules.
    - **NEEDS-HUMAN**: a risk path is touched → write a briefing of at most 15 lines: what changes for
-     users, money, data or security, in plain words; a before/after table; the checks that ran; how to
-     roll back. The human approves the merge.
+     users, money, data or security, in plain words; a before/after table; what merging triggers (a
+     deploy, a migration); the checks that ran and any that did not; how to roll back. The human
+     approves the merge.
    - **RETHINK**: the round cap is reached with an IMPORTANT finding open → stop, and bring the
      approach question to the human (`isv log stop.line reason=cap`).
 
-On someone else's pull request: run the same review, do not merge, and post findings only if the
-human asks.
+6. **Show it where the human looks.** On NEEDS-HUMAN or RETHINK, label the PR and post a comment whose
+   first line is `isv verdict: <VERDICT>`, followed by the briefing (RETHINK: the open finding and the
+   approach question):
+
+   ```
+   gh label create <needs-human|rethink> --color D93F0B --force
+   gh pr edit <n> --add-label <needs-human|rethink>    # remove the other verdict label if present
+   gh pr comment <n> --body-file <file>
+   ```
+
+   Say the same in the conversation. On MERGE, remove a verdict label left by an earlier round. The
+   human lists everything waiting on them with `gh search prs --state open --label needs-human`.
+
+On someone else's pull request: run the same review, do not merge, and do not label or comment
+unless the human asks.
