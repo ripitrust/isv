@@ -12,8 +12,8 @@ evidence that motivated it.
   `isv verdict: none (merged before the review returned)`, and the early merge is logged as an
   override.
 - Evidence: the review of 0.1.5, which returned after its merge, found METHOD contradicting the
-  skill on RETHINK and silent on the tie-break. Three PRs in a row were merged before their
-  reviews returned.
+  skill on RETHINK and silent on the tie-break. Two PRs in a row (#2, #3) were merged before
+  their reviews returned.
 
 ## 0.1.5 — 2026-10-26
 

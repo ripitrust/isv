@@ -52,8 +52,9 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
      file:line, and the response (fixed in <commit or PR>, or dismissed and why);
    - for NEEDS-HUMAN, the briefing; for RETHINK, the open finding and the approach question.
 
-   If the PR merged before the review returned, still post the record, with first line
-   `isv verdict: none (merged before the review returned)`; fix what holds in a follow-up PR and
+   If the PR merged before the review returned, fix what holds in a follow-up PR, then still post
+   the record, naming that PR, with first line
+   `isv verdict: none (merged before the review returned)`, and
    `isv log override step=verify by=human reason=…`.
 
    NEEDS-HUMAN and RETHINK both wait on the human, so both get the same label:
