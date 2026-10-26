@@ -3,6 +3,18 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.1.4 — 2026-10-26
+
+- verify: NEEDS-HUMAN and RETHINK are shown on the PR: a `needs-human` or `rethink` label and a
+  comment headed `isv verdict: <VERDICT>` with the briefing; MERGE removes a stale verdict label.
+  The briefing now also says what merging triggers (a deploy, a migration) and which checks did
+  not run.
+- METHOD and README: where the human finds PRs waiting on them
+  (`gh search prs --state open --label needs-human`).
+- Evidence: the pilot's first NEEDS-HUMAN verdict lived only in the session's chat and the local
+  log, and the PR showed nothing. The owner had to ask what the verdict meant and what merging
+  would do: it triggered a staging deploy and a migration, and one acceptance check had not run.
+
 ## 0.1.3 — 2026-10-26
 
 - frame: the brief review is one round with two reviewers in parallel: necessity (cut, question,

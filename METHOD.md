@@ -1,6 +1,6 @@
 # ISV — Intent → Slice → Verify
 
-Version 0.1.3. A development flow for one human working with coding agents. It aims for
+Version 0.1.4. A development flow for one human working with coding agents. It aims for
 code that is correct, small and understood by the person who owns it, with as few human
 interruptions as that allows.
 
@@ -38,7 +38,8 @@ Classify by the change, not by who asks. When unsure, run `frame`: its first ste
 1. Framing: rule on the decisions `frame` surfaces (target: 3–5 per change, one at a time).
 2. Approve the brief once.
 3. Approve the slice list once.
-4. Approve merges whose verdict is NEEDS-HUMAN (changes touching a configured risk path).
+4. Approve merges whose verdict is NEEDS-HUMAN (changes touching a configured risk path). Each
+   such PR carries a `needs-human` label and a briefing comment.
 5. Release.
 
 Everything else proceeds without asking, unless a stop-the-line condition fires.
@@ -80,6 +81,9 @@ or PRE-EXISTING. Verdicts:
 - **NEEDS-HUMAN**: a risk path is touched. The human gets a briefing of at most 15 lines.
 - **RETHINK**: the cap was reached with an IMPORTANT finding still open. The approach goes back
   to the human.
+
+NEEDS-HUMAN and RETHINK are posted on the PR as a label and a comment with the briefing, so the
+human can list everything waiting on them; MERGE leaves no label.
 
 ## Stop the line
 
