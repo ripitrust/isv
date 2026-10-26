@@ -26,7 +26,7 @@ Each line in `.isv/log/<change>.jsonl` is one JSON object:
 | `decision.resolved` | `decision`, `outcome` (ruled, adopted, agent-decided) | `teachback` (pass, fail, skipped) |
 | `explain.requested` | `target`, `stage` (frame, slice, verify, other) | `depth` |
 | `explainability.test` | `result` (pass, fail) | |
-| `necessity.result` | `remove`, `ask`, `missing_check` | `accepted_remove`, `accepted_ask`, `accepted_missing_check` |
+| `necessity.result` (one per brief reviewer) | `remove`, `ask`, `missing_check` | `accepted_remove`, `accepted_ask`, `accepted_missing_check`, `lens` (necessity, fidelity; absent counts as necessity), `reviewer`, `contradiction`, `accepted_contradiction` |
 | `slice.created` | `slice`, `risk_path` (true, false) | `checks`, `issue` |
 | `review.round` | `pr`, `round`, `reviewer` | `important`, `nit`, `pre_existing`, `removal` |
 | `finding.resolved` | `pr`, `finding`, `response` (fixed, wrong, intentional, not-worth, pre-existing) | `reason` |

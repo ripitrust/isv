@@ -39,6 +39,7 @@ class Config:
     t0_max_changed_lines: int = 100
     review_max_rounds: int = 3
     review_max_nits: int = 5
+    review_external_cmd: str = ""
     risk_paths: tuple[str, ...] = ()
     test_globs: tuple[str, ...] = DEFAULT_TEST_GLOBS
     pr_sections: tuple[str, ...] = DEFAULT_PR_SECTIONS
@@ -85,6 +86,7 @@ def load(start: Path | None = None) -> Config:
         ),
         review_max_rounds=review.get("max_rounds", Config.review_max_rounds),
         review_max_nits=review.get("max_nits", Config.review_max_nits),
+        review_external_cmd=review.get("external_cmd", Config.review_external_cmd),
         risk_paths=tuple(raw.get("risk", {}).get("paths", ())),
         test_globs=tuple(project.get("test_globs", DEFAULT_TEST_GLOBS)),
         pr_sections=tuple(raw.get("pr", {}).get("required_sections", DEFAULT_PR_SECTIONS)),

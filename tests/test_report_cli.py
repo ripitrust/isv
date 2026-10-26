@@ -47,6 +47,17 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(built.overrides["necessity"], 1)
         self.assertIn("Reviewer precision", report.render(built))
 
+    def test_brief_review_by_lens(self) -> None:
+        _log(self.dir, "necessity.result", remove=1, ask=2, missing_check=3,
+             accepted_ask=2, accepted_missing_check=3)
+        _log(self.dir, "necessity.result", lens="fidelity", reviewer="codex/gpt-5", remove=0,
+             ask=0, missing_check=1, contradiction=2, accepted_missing_check=1,
+             accepted_contradiction=2)
+
+        built = report.build(events.read_all(self.dir))
+        self.assertEqual(built.necessity_items["contradiction"], 2)
+        self.assertEqual(built.review_accepted_by_lens, {"necessity": 5, "fidelity": 3})
+
     def test_empty_log_renders(self) -> None:
         self.assertIn("n/a", report.render(report.build([])))
 
@@ -94,6 +105,42 @@ class CliTest(unittest.TestCase):
             code, out = self._run("template", name)
             self.assertEqual(code, 0)
             self.assertTrue(out.strip())
+
+
+
+class ReviewCommandTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.cwd = Path.cwd()
+        os.chdir(self.root)
+        (self.root / "prompt.md").write_text("check this brief\n", encoding="utf-8")
+
+    def tearDown(self) -> None:
+        os.chdir(self.cwd)
+        self.tmp.cleanup()
+
+    def _configure(self, command: str) -> None:
+        (self.root / ".isv").mkdir()
+        config = f'[review]\nexternal_cmd = "{command}"\n'
+        (self.root / ".isv" / "config.toml").write_text(config, encoding="utf-8")
+
+    def _review(self) -> tuple[int, str]:
+        out = io.StringIO()
+        with redirect_stdout(out), redirect_stderr(io.StringIO()):
+            code = cli.main(["review", "--prompt-file", "prompt.md"])
+        return code, out.getvalue()
+
+    def test_runs_the_reviewer_with_the_prompt_on_stdin(self) -> None:
+        self._configure("cat")
+        self.assertEqual(self._review(), (0, "check this brief\n"))
+
+    def test_no_reviewer_configured_exits_3(self) -> None:
+        self.assertEqual(self._review()[0], 3)
+
+    def test_missing_reviewer_command_exits_3(self) -> None:
+        self._configure("no-such-reviewer-command")
+        self.assertEqual(self._review()[0], 3)
 
 
 if __name__ == "__main__":

@@ -13,8 +13,10 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
    the check output, and `isv check risk --base <base>`.
 
 2. **Review with fresh context.** A reviewer that did not write the code: a subagent with no
-   conversation history, from a **different model family** when the PR touches a risk path and one is
-   available. Give it the material above and this prompt:
+   conversation history. When the PR touches a risk path, use a **different model family** instead:
+   write the material and prompt to a file and run `isv review --prompt-file <file> > <out>` (exit
+   code 3: none is usable, so use the subagent and `isv log note` why). Give the reviewer the material
+   above and this prompt:
 
    > Review this pull request on two axes. SPEC: is every acceptance check met; is anything partial
    > (including the docs of a public API or contract it changes), wrong, or beyond scope?

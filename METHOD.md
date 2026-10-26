@@ -1,6 +1,6 @@
 # ISV — Intent → Slice → Verify
 
-Version 0.1.2. A development flow for one human working with coding agents. It aims for
+Version 0.1.3. A development flow for one human working with coding agents. It aims for
 code that is correct, small and understood by the person who owns it, with as few human
 interruptions as that allows.
 
@@ -60,14 +60,18 @@ honestly), *agent-decided*.
 One file per T2 change, at most `brief.max_lines` lines, written from `isv template brief`.
 It opens with five plain sentences anyone can read. It holds decisions, a **surface budget**
 (every new thing and why an existing one cannot do it) and **executable acceptance checks**.
-Before approval, a fresh-context reviewer makes one **necessity pass**. It may only remove,
-question or flag missing checks; it may not add mechanisms. When the last slice merges or the
+Before approval, two fresh-context reviewers make one pass in parallel: **necessity** (remove,
+question, flag missing checks) and **fidelity** (contradictions with the brief's sources or with
+itself, missed boundary cases). Neither may add mechanisms. Fidelity runs on a different model
+family when `review.external_cmd` is set. There is no second pass unless the revision adds new
+surface, and then only for that part. When the last slice merges or the
 change is abandoned, `slice close` sets the brief to `closed` and fills its Outcome section, which
 replaces a separate summary document.
 
 ## Review
 
-A PR that changes a public API or contract updates its docs in the same PR.
+A PR that changes a public API or contract updates its docs in the same PR. Risk-path PRs are
+reviewed by a different model family when `review.external_cmd` is set.
 At most `review.max_rounds` rounds. From round 2, the reviewer sees only the new diff and still-open
 IMPORTANT findings. Each finding needs file:line or a failing case and is IMPORTANT, NIT (capped)
 or PRE-EXISTING. Verdicts:
