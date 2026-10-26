@@ -76,7 +76,7 @@ Record each step with `isv log <event> --change <YYYYMMDD-slug> k=v ...` (set `I
 
 9. **Approval.** The human approves the brief once. Set its status to `approved` and hand off to
    `slice`. If the human skipped or changed any step above, `isv log override step=<step> by=human
-   reason=…`.
+   reason=…`. If the human drops the change at any point, run `slice close` with `outcome=abandoned`.
 
 ## Stop and ask
 

@@ -1,11 +1,11 @@
 ---
 name: slice
-description: Turn an approved brief into vertical slices (cut), then build each slice as one small, tested pull request (build). Use after a brief is approved, or with "slice build <issue>" for a single self-contained change inside the existing design (tier T1).
+description: Turn an approved brief into vertical slices (cut), build each slice as one small, tested pull request (build), and close the change once the last one merges or the change is abandoned (close). Use after a brief is approved, or with "slice build <issue>" for a single self-contained change inside the existing design (tier T1).
 ---
 
 # slice — small verified steps
 
-Two modes. Log with `isv log <event> --change <id> …` (see `frame` for setup).
+Three modes. Log with `isv log <event> --change <id> …` (see `frame` for setup).
 
 ## cut: brief → slices
 
@@ -20,11 +20,14 @@ Two modes. Log with `isv log <event> --change <id> …` (see `frame` for setup).
 
 ## build: slice → pull request
 
-1. **Read** the brief and the issue. Restate the acceptance checks as tests and see them fail.
+1. **Read** the brief (T2) and the issue. Restate the acceptance checks as tests and see them fail.
+   A T1 change has no `frame` step, so open it here:
+   `isv log change.started --change <YYYYMMDD-slug> tier=T1 slug=<slug> issue=<n>`.
 2. **Smallest change that works**, taking the first rung that fully solves it: does it need to exist →
    existing code → standard library or platform → an installed dependency → minimal new code.
    **Never cut:** validation at trust boundaries, error handling that prevents data loss, security,
-   money and precision invariants, anything the brief requires. Complete every affected caller and test.
+   money and precision invariants, anything the brief requires. Complete every affected caller and test,
+   and update the docs of any public API or contract the slice changes, in the same PR.
 3. **Run the project's checks** (tests, lint, types, migrations) and keep the output.
 4. **Self-check with fresh eyes:** a subagent with no history reads the diff once for bugs and for
    code that can be deleted. Apply what holds.
@@ -32,7 +35,17 @@ Two modes. Log with `isv log <event> --change <id> …` (see `frame` for setup).
    `isv check pr-body --body-file <file>` and `isv check surface --base <base> --body-file <file>`.
    New surface beyond the brief's budget is a stop-the-line, not a footnote.
 6. **Open the PR** linked to the issue, then run `verify` on it.
-7. **Continue** with the next unblocked slice without asking, unless a stop-the-line fires.
+7. **Continue** with the next unblocked slice without asking, unless a stop-the-line fires. When none
+   is left, run `close` once the last PR has merged.
+
+## close: change → record
+
+Run when every slice of the change has merged (`gh pr view <n> --json state`), or the human
+abandons the change.
+
+1. **T2:** fill the brief's **Outcome** section and set its status to `closed`. It replaces a separate
+   summary document; ship it through the repository's normal review path.
+2. `isv log change.closed --change <id> outcome=shipped|abandoned detail=<one line>`.
 
 ## Stop and ask
 

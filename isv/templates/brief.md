@@ -44,4 +44,4 @@ change: <YYYYMMDD-slug> · tier: T2 · status: draft | approved | closed · flow
 | 1 | <vertical slice, one PR> | A1, A2 | yes / no | — |
 
 ## Outcome
-<Filled at close, at most 10 lines: what shipped, deviations from this brief, follow-ups.>
+<Filled at close, at most 10 lines: what shipped (PR links), each deviation from this brief and why, follow-ups.>

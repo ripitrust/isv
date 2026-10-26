@@ -52,6 +52,8 @@ def _ratio(numerator: int, denominator: int) -> float | None:
 def build(events: list[Event]) -> Report:
     report = Report()
     changes = {e.change for e in events if e.event == "change.started"}
+    # Only T2 changes reach frame, where human decisions happen; T1 would dilute the ratio.
+    framed = {e.change for e in events if e.event == "change.started" and e.data["tier"] == "T2"}
     human_decisions: Counter[str] = Counter()
     teachbacks: list[str] = []
     explain_by_change: Counter[str] = Counter()
@@ -98,10 +100,11 @@ def build(events: list[Event]) -> Report:
             case "note":
                 report.notes.append(f"{e.ts[:10]} {e.change}: {d['text']}")
 
-    if changes:
+    if framed:
         report.human_decisions_per_change = round(
-            sum(human_decisions[c] for c in changes) / len(changes), 2
+            sum(human_decisions[c] for c in framed) / len(framed), 2
         )
+    if changes:
         report.explain_per_change = round(
             sum(explain_by_change[c] for c in changes) / len(changes), 2
         )
@@ -161,7 +164,7 @@ def render(report: Report) -> str:
     rows = [
         ("Changes by tier", report.changes_by_tier),
         ("Closed", report.closed),
-        ("Human decisions per change", report.human_decisions_per_change),
+        ("Human decisions per T2 change", report.human_decisions_per_change),
         ("Decision outcomes", report.decision_outcomes),
         ("Teach-back first-pass rate", report.teachback_first_pass),
         ("Explain requests per change", report.explain_per_change),

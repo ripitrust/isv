@@ -3,6 +3,21 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.1.1 — 2026-10-26
+
+- slice: new `close` mode. When the last slice merges, or the change is abandoned (`frame`
+  routes there too), it fills the brief's Outcome, sets the brief to `closed` and logs
+  `change.closed`. A T1 change now logs `change.started` in `build`, so it is counted.
+- report: human decisions per change counts T2 changes only, since T1 changes never reach
+  `frame`; 0.1.0 baselines stay comparable.
+- slice build and verify: a PR that changes a public API or contract updates its docs in the
+  same PR, and the reviewer checks it.
+- tests: every schema event must be logged by some skill (`note` excepted).
+- Evidence: during the first live `frame` run in a pilot repository, the owner asked where the
+  old flow's final summary step had gone. It had no successor: no skill filled the Outcome or
+  logged `change.closed`, so `isv report` could never count a closed change, and the old step's
+  "update public docs on API change" rule had been dropped.
+
 ## 0.1.0 — 2026-10-26
 
 First internal beta.

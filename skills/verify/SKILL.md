@@ -16,8 +16,9 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
    conversation history, from a **different model family** when the PR touches a risk path and one is
    available. Give it the material above and this prompt:
 
-   > Review this pull request on two axes. SPEC: is every acceptance check met; is anything partial,
-   > wrong, or beyond scope? SIMPLICITY: what could be removed, what duplicates an existing mechanism
+   > Review this pull request on two axes. SPEC: is every acceptance check met; is anything partial
+   > (including the docs of a public API or contract it changes), wrong, or beyond scope?
+   > SIMPLICITY: what could be removed, what duplicates an existing mechanism
    > (name it), what need not exist? Every finding needs a file:line or a concrete failing case — no
    > evidence, no finding. Label each IMPORTANT (breaks behaviour, data, money, security or the spec),
    > NIT (at most `review.max_nits`, then just a count), or PRE-EXISTING (not introduced here). Do not

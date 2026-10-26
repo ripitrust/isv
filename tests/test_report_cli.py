@@ -22,6 +22,8 @@ class ReportTest(unittest.TestCase):
 
     def test_metrics(self) -> None:
         _log(self.dir, "change.started", tier="T2", slug="ledger")
+        # A T1 change never reaches frame, so it must not dilute human decisions per change.
+        _log(self.dir, "change.started", change="c2", tier="T1", slug="fix")
         _log(self.dir, "decision.presented", decision="d1", kind="one-way")
         _log(self.dir, "decision.presented", decision="d2", kind="reversible")
         _log(self.dir, "decision.resolved", decision="d1", outcome="ruled", teachback="pass")
@@ -38,7 +40,7 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(built.changes_by_tier["T2"], 1)
         self.assertEqual(built.human_decisions_per_change, 1.0)
         self.assertEqual(built.teachback_first_pass, 1.0)
-        self.assertEqual(built.explain_per_change, 1.0)
+        self.assertEqual(built.explain_per_change, 0.5)
         self.assertEqual(built.rounds_per_pr, 2)
         self.assertEqual(built.reviewer_precision, 0.5)
         self.assertEqual(built.removal_share, 0.25)

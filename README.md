@@ -3,7 +3,7 @@
 **Intent → Slice → Verify.** A small development flow for working with coding agents. Four
 skills, one dependency-free CLI, and a local audit log that measures whether the flow helps.
 
-Status: 0.1.0, internal beta. No results are claimed yet; `isv report` exists to produce them.
+Status: 0.1.1, internal beta. No results are claimed yet; `isv report` exists to produce them.
 
 ## What is in it
 
@@ -11,7 +11,7 @@ Status: 0.1.0, internal beta. No results are claimed yet; `isv report` exists to
 |---|---|
 | [METHOD.md](METHOD.md) | The flow: tiers, human touchpoints, review rules, stop-the-line, measurement |
 | `skills/frame` | Turns intent into a short brief with real decisions and executable checks (T2 only) |
-| `skills/slice` | Cuts a brief into vertical slices; builds each as one small, tested PR |
+| `skills/slice` | Cuts a brief into vertical slices; builds each as one small, tested PR; closes the change |
 | `skills/verify` | Fresh-context, evidence-bound review with a round cap and a verdict |
 | `skills/explain` | Plain-words explanation grounded in the code, one level at a time |
 | `isv` CLI | Event log, report, audit trace, PR checks, templates, a push guard hook |
