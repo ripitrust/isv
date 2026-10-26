@@ -1,0 +1,32 @@
+# isv project configuration. Everything project-specific lives here; the skills stay generic.
+
+[project]
+docs_dir = "docs/designs"          # where briefs live (one file per change)
+# test_globs = ["tests/**"]        # excluded from PR size metrics
+
+[tiers]
+t0_max_changed_lines = 100
+
+[brief]
+max_lines = 250
+
+[review]
+max_rounds = 3
+max_nits = 5
+
+[risk]
+# Changes touching these paths need a human merge approval (verdict NEEDS-HUMAN).
+paths = [
+  "isv/events.py",   # log schema and hash chain: audit integrity
+  "isv/guard.py",    # safety hook
+]
+
+[pr]
+required_sections = ["Why", "What", "Verification", "Risk", "Surface budget"]
+
+# Each detector finds new surface in ADDED lines; capture group 1 is the identifier.
+# Every identifier found must be named in the PR body's "## Surface budget" section.
+# [[surface.detectors]]
+# name = "table"
+# paths = ["migrations/*.py"]
+# pattern = 'create_table\(\s*["'']([A-Za-z0-9_]+)'

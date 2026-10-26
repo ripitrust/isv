@@ -1,0 +1,14 @@
+{
+  "name": "isv",
+  "description": "The isv development flow: skills plus CLI.",
+  "owner": {
+    "name": "isv maintainers"
+  },
+  "plugins": [
+    {
+      "name": "isv",
+      "source": "./",
+      "description": "Intent \u2192 Slice \u2192 Verify: frame, slice, verify and explain skills plus the isv CLI."
+    }
+  ]
+}
