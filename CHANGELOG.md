@@ -3,6 +3,20 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.1.3 — 2026-10-26
+
+- frame: the brief review is one round with two reviewers in parallel: necessity (cut, question,
+  missing checks) and fidelity (contradictions with the brief's sources or itself, missed
+  boundary cases). One combined triage; a second look only at new surface.
+- `isv review --prompt-file F` runs `review.external_cmd`, a reviewer from another model family,
+  with the prompt on stdin; exit code 3 when none is usable, so the skill falls back to a
+  subagent. verify uses it for risk-path PRs.
+- `necessity.result` takes optional `lens`, `reviewer` and `contradiction` fields (additive);
+  `isv report` shows accepted items per lens.
+- Evidence: on the first live brief, the necessity pass (10 items) and a review against the
+  design doc and sibling code (6 items, 2 important) barely overlapped, and the pilot noted that
+  no reviewer from another model family was reachable.
+
 ## 0.1.2 — 2026-10-26
 
 - `isv log` accepts `k=v` fields on either side of an option. argparse without CPython

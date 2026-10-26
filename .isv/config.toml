@@ -13,6 +13,7 @@ max_lines = 250
 [review]
 max_rounds = 3
 max_nits = 5
+external_cmd = "codex exec -s read-only --ephemeral -"   # different model family
 
 [risk]
 # Changes touching these paths need a human merge approval (verdict NEEDS-HUMAN).

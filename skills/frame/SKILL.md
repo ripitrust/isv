@@ -56,9 +56,11 @@ Record each step with `isv log <event> --change <YYYYMMDD-slug> k=v ...` (set `I
    do it, naming what you checked. Acceptance checks must be executable (a command or test and its
    expected result).
 
-7. **Necessity pass — one pass, no loop.** Start a reviewer with **fresh context** (a subagent with no
-   conversation history; prefer a different model family; otherwise a new session) and give it only
-   the brief, repository access and this prompt:
+7. **Brief review — one round, two reviewers in parallel, no loop.** Each reviewer has **fresh
+   context** and gets only the brief, repository access, the sources of truth the brief cites (design
+   docs, earlier rulings, code it names) and its prompt.
+
+   **Necessity**, a subagent with no conversation history:
 
    > You are reviewing a design brief before any code exists. Restate in three sentences what it will
    > build; if you cannot, report that first. Then return at most 10 items, each labelled exactly one of
@@ -68,8 +70,22 @@ Record each step with `isv log <event> --change <YYYYMMDD-slug> k=v ...` (set `I
    > failing scenario. Do not propose new mechanisms, tables, flags or components. An empty list is a
    > valid answer.
 
-   Show the items to the human; apply what they accept; revise the brief once.
-   `isv log necessity.result remove=<n> ask=<n> missing_check=<n> accepted_remove=<n> …`.
+   **Fidelity**, a different model family: write the prompt to a file and run
+   `isv review --prompt-file <file> > <out>` (it runs `review.external_cmd` and can take minutes, so
+   run it in the background). Exit code 3 means no usable external reviewer: use a second
+   fresh-context subagent and `isv log note` why.
+
+   > You are checking a design brief against its sources before any code exists. Sources: <list>.
+   > Return at most 10 items, each labelled exactly one of CONTRADICTION (the brief conflicts with a
+   > source or with itself — quote both sides), MISSING-CHECK (a boundary, race or timing case with no
+   > executable acceptance check) or QUESTION. Every item needs evidence: file:line on both sides or a
+   > concrete failing scenario. Do not propose new mechanisms, tables, flags or components. An empty
+   > list is a valid answer.
+
+   Show both lists to the human together; apply what they accept; revise the brief once. A finding a
+   test can settle becomes an acceptance check, not more prose. Review again only if the revision adds
+   to the surface budget, and then only that part. Log one result per reviewer:
+   `isv log necessity.result lens=necessity|fidelity reviewer=<tool/model> remove=<n> ask=<n> missing_check=<n> contradiction=<n> accepted_…`.
 
 8. **Spike** only if an empirical question remains (behaviour, performance, an API's real response):
    a throwaway branch `spike/<slug>`, never merged. Write the answer into the brief as evidence.

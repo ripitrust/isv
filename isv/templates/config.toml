@@ -13,6 +13,12 @@ max_lines = 250
 [review]
 max_rounds = 3
 max_nits = 5
+# A reviewer from another model family, for frame's fidelity review and risk-path PRs. It gets the
+# prompt on stdin and prints findings on stdout; keep it read-only. It runs as a plain command line
+# (no shell) from the repository root, so review it like any project script. Unset: a
+# fresh-context subagent of the current agent is used.
+# external_cmd = "codex exec -s read-only --ephemeral -"     # Claude Code as the author
+# external_cmd = "claude -p --allowedTools Read,Grep,Glob"   # Codex as the author
 
 [risk]
 # Changes touching these paths need a human merge approval (verdict NEEDS-HUMAN).

@@ -9,6 +9,14 @@ from isv import events
 
 
 class ValidationTest(unittest.TestCase):
+    def test_brief_review_lens(self) -> None:
+        fields = {"remove": "0", "ask": "1", "missing_check": "2", "lens": "fidelity",
+                  "reviewer": "codex/gpt-5", "contradiction": "3"}
+        data = events.validate("necessity.result", fields)
+        self.assertEqual((data["lens"], data["contradiction"]), ("fidelity", 3))
+        with self.assertRaises(events.EventError):
+            events.validate("necessity.result", {**fields, "lens": "style"})
+
     def test_coerces_types(self) -> None:
         data = events.validate("review.round", {"pr": "12", "round": "2", "reviewer": "codex/gpt"})
         self.assertEqual(data, {"pr": 12, "round": 2, "reviewer": "codex/gpt"})

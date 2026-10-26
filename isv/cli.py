@@ -9,6 +9,7 @@
     isv check pr-body|surface|risk        mechanical checks for CI and agents
     isv template <name>                   print a template (brief, decision-card, ...)
     isv guard                             hook adapter: block unsafe shell commands
+    isv review --prompt-file F            run the external reviewer on a prompt
 """
 
 from __future__ import annotations
@@ -16,6 +17,8 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
+import subprocess
 import sys
 from dataclasses import asdict
 from importlib import resources
@@ -30,6 +33,7 @@ TEMPLATES = ("brief", "decision-card", "pr-body", "slice-issue", "config")
 _TEMPLATE_FILES = {name: f"{name}.toml" if name == "config" else f"{name}.md" for name in TEMPLATES}
 _GITIGNORE_LINE = ".isv/log/"
 _EXIT_FAILED = 1
+_EXIT_NO_REVIEWER = 3  # no usable external reviewer: the caller falls back to a subagent
 
 
 def _template(name: str) -> str:
@@ -167,6 +171,35 @@ def cmd_guard(_: argparse.Namespace) -> int:
     return guard.main()
 
 
+def cmd_review(args: argparse.Namespace) -> int:
+    cfg = config_mod.load()
+    prompt = Path(args.prompt_file)
+    if not prompt.is_file():
+        print(f"isv: prompt file not found: {prompt}", file=sys.stderr)
+        return _EXIT_FAILED
+
+    try:
+        argv = shlex.split(cfg.review_external_cmd)
+    except ValueError:
+        print("isv: review.external_cmd is not a valid command line", file=sys.stderr)
+        return _EXIT_FAILED
+    if not argv:
+        print("isv: no review.external_cmd configured", file=sys.stderr)
+        return _EXIT_NO_REVIEWER
+
+    try:
+        with prompt.open(encoding="utf-8") as stdin:
+            # A command line from the repository's own config, run like any project script.
+            result = subprocess.run(
+                argv, stdin=stdin, stdout=subprocess.PIPE, text=True, cwd=cfg.root, check=False
+            )
+    except FileNotFoundError:
+        print(f"isv: reviewer command not found: {argv[0]}", file=sys.stderr)
+        return _EXIT_NO_REVIEWER
+    sys.stdout.write(result.stdout)
+    return result.returncode
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="isv", description="Intent → Slice → Verify toolkit")
     parser.add_argument("--version", action="version", version=f"isv {__version__}")
@@ -211,6 +244,10 @@ def build_parser() -> argparse.ArgumentParser:
     tpl.set_defaults(func=cmd_template)
 
     sub.add_parser("guard", help="hook adapter: block unsafe shell commands").set_defaults(func=cmd_guard)
+
+    rev = sub.add_parser("review", help="run the external reviewer (review.external_cmd)")
+    rev.add_argument("--prompt-file", required=True, help="prompt, passed to the reviewer on stdin")
+    rev.set_defaults(func=cmd_review)
     return parser
 
 

@@ -3,7 +3,7 @@
 **Intent → Slice → Verify.** A small development flow for working with coding agents. Four
 skills, one dependency-free CLI, and a local audit log that measures whether the flow helps.
 
-Status: 0.1.2, internal beta. No results are claimed yet; `isv report` exists to produce them.
+Status: 0.1.3, internal beta. No results are claimed yet; `isv report` exists to produce them.
 
 ## What is in it
 
@@ -38,8 +38,14 @@ isv check pr-body --body-file F         required PR sections present
 isv check surface --base B --body-file F   new tables/flags/RPCs/deps are declared
 isv check risk --base B                 risk paths touched → human merge
 isv template <name>                     brief | decision-card | pr-body | slice-issue | config
+isv review --prompt-file F              run the external reviewer (review.external_cmd)
 isv guard                               PreToolUse hook: blocks force-push and --no-verify
 ```
+
+`isv review` passes the prompt file on stdin to `review.external_cmd` (a command line, run without
+a shell from the repository root) and returns the reviewer's output and exit code. It exits 3 when
+no reviewer is configured or the command is not found, so callers fall back to a subagent, and 1
+when the prompt file or the command line is invalid.
 
 Guard hook (`.claude/settings.json`):
 

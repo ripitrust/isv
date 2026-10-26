@@ -39,7 +39,10 @@ EVENTS: dict[str, tuple[frozenset[str], frozenset[str]]] = {
     "explainability.test": (frozenset({"result"}), frozenset()),
     "necessity.result": (
         frozenset({"remove", "ask", "missing_check"}),
-        frozenset({"accepted_remove", "accepted_ask", "accepted_missing_check"}),
+        frozenset(
+            {"accepted_remove", "accepted_ask", "accepted_missing_check", "lens", "reviewer",
+             "contradiction", "accepted_contradiction"}
+        ),
     ),
     "slice.created": (frozenset({"slice", "risk_path"}), frozenset({"checks", "issue"})),
     "review.round": (
@@ -67,6 +70,7 @@ ENUMS: dict[str, frozenset[str]] = {
         {"assumption-falsified", "budget", "cap", "not-executable", "irreversible"}
     ),
     "by": frozenset({"human", "agent"}),
+    "lens": frozenset({"necessity", "fidelity"}),
 }
 
 # Outcome values allowed per event (the shared "outcome" enum covers two events).
@@ -79,7 +83,8 @@ INT_FIELDS = frozenset(
     {
         "issue", "lines", "card_lines", "depth", "remove", "ask", "missing_check",
         "accepted_remove", "accepted_ask", "accepted_missing_check", "checks", "pr",
-        "round", "rounds", "important", "nit", "pre_existing", "removal",
+        "round", "rounds", "important", "nit", "pre_existing", "removal", "contradiction",
+        "accepted_contradiction",
     }
 )
 BOOL_FIELDS = frozenset({"risk_path"})

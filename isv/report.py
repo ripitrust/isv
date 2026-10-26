@@ -19,6 +19,7 @@ from isv.config import Config
 from isv.events import Event
 
 HUMAN_DECISION_KINDS = frozenset({"product", "one-way"})
+_REVIEW_KINDS = ("remove", "ask", "missing_check", "contradiction")
 
 
 @dataclass
@@ -33,6 +34,7 @@ class Report:
     explainability_fail_rate: float | None = None
     necessity_items: Counter[str] = field(default_factory=Counter)
     necessity_accepted: Counter[str] = field(default_factory=Counter)
+    review_accepted_by_lens: Counter[str] = field(default_factory=Counter)
     rounds_per_pr: float | None = None
     max_rounds: int = 0
     reviewer_precision: float | None = None
@@ -80,9 +82,12 @@ def build(events: list[Event]) -> Report:
             case "explainability.test":
                 explainability.append(str(d["result"]))
             case "necessity.result":
-                for kind in ("remove", "ask", "missing_check"):
-                    report.necessity_items[kind] += int(d[kind])
-                    report.necessity_accepted[kind] += int(d.get(f"accepted_{kind}", 0))
+                for kind in _REVIEW_KINDS:
+                    report.necessity_items[kind] += int(d.get(kind, 0))
+                    accepted = int(d.get(f"accepted_{kind}", 0))
+                    report.necessity_accepted[kind] += accepted
+                    # Logs from before 0.1.3 have no lens: they came from the necessity pass.
+                    report.review_accepted_by_lens[str(d.get("lens", "necessity"))] += accepted
             case "review.round":
                 pr = int(d["pr"])
                 rounds[pr] = max(rounds[pr], int(d["round"]))
@@ -170,8 +175,9 @@ def render(report: Report) -> str:
         ("Explain requests per change", report.explain_per_change),
         ("Explain requests by stage", report.explain_requests),
         ("Explainability fail rate", report.explainability_fail_rate),
-        ("Necessity items raised", report.necessity_items),
-        ("Necessity items accepted", report.necessity_accepted),
+        ("Brief review items raised", report.necessity_items),
+        ("Brief review items accepted", report.necessity_accepted),
+        ("Brief review accepted by lens", report.review_accepted_by_lens),
         ("Review rounds per PR (mean)", report.rounds_per_pr),
         ("Review rounds, max", report.max_rounds or None),
         ("Reviewer precision (fixed / resolved)", report.reviewer_precision),
