@@ -3,6 +3,17 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.1.2 — 2026-10-26
+
+- `isv log` accepts `k=v` fields on either side of an option. argparse without CPython
+  gh-59317 (3.11, 3.12.0–3.12.6, 3.13.0) stops collecting them at the first option, so
+  `isv log <event> --change <id> k=v`, the order every skill uses, failed there; every version
+  failed when fields sat on both sides. Python 3.11+ stays supported.
+- docs/events.md: the example line matches what `isv log` writes (`schema`, not `v`; sorted
+  keys, inside `data` too), a test keeps them in step, and the tier values are listed.
+- Evidence: two independent reviews of this change ran the suite on 3.11–3.14, traced the
+  argparse fix to 3.12.7 and 3.13.1, and compared the doc with real log lines.
+
 ## 0.1.1 — 2026-10-26
 
 - slice: new `close` mode. When the last slice merges, or the change is abandoned (`frame`

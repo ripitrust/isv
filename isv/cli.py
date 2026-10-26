@@ -215,7 +215,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+    parser = build_parser()
+    args, extra = parser.parse_known_args(argv)
+    # Some argparse versions stop filling `fields` at the first option (`log <event> --change c
+    # k=v`), so leftover k=v land here; anything else unknown is still an error.
+    if extra:
+        if not hasattr(args, "fields") or any(arg.startswith("-") for arg in extra):
+            parser.error(f"unrecognized arguments: {' '.join(extra)}")
+        args.fields += extra
     try:
         return int(args.func(args))
     except events_mod.EventError as exc:

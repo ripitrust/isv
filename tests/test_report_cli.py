@@ -2,7 +2,7 @@ import io
 import os
 import tempfile
 import unittest
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
 from isv import cli, events, report
@@ -74,6 +74,17 @@ class CliTest(unittest.TestCase):
         self.assertIn("change.started", out)
         self.assertIn("[human]", out)
         self.assertEqual(self._run("verify-log")[0], 0)
+
+    def test_fields_on_both_sides_of_an_option(self) -> None:
+        # Some argparse versions stop collecting `fields` at the first option.
+        code, _ = self._run("log", "verdict", "pr=1", "--change", "c9", "verdict=MERGE", "rounds=1")
+        self.assertEqual(code, 0)
+        self.assertIn("verdict", self._run("trace", "c9")[1])
+
+    def test_unknown_option_is_still_rejected(self) -> None:
+        with self.assertRaises(SystemExit) as raised, redirect_stderr(io.StringIO()):
+            self._run("log", "verdict", "--chnage", "c9", "pr=1", "verdict=MERGE", "rounds=1")
+        self.assertEqual(raised.exception.code, 2)
 
     def test_invalid_event_is_rejected(self) -> None:
         self.assertEqual(self._run("log", "verdict", "pr=1", "verdict=SHIP", "rounds=1")[0], 1)

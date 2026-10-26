@@ -3,10 +3,11 @@
 Each line in `.isv/log/<change>.jsonl` is one JSON object:
 
 ```json
-{"v":1,"seq":3,"ts":"2026-10-26T09:12:00Z","event":"verdict","change":"20261026-ledger",
- "actor":"agent:claude-code/opus","data":{"pr":12,"verdict":"MERGE","rounds":2},"prev":"<sha256>"}
+{"actor":"agent:claude-code/opus","change":"20261026-ledger","data":{"pr":12,"rounds":2,"verdict":"MERGE"},
+ "event":"verdict","prev":"<sha256>","schema":1,"seq":3,"ts":"2026-10-26T09:12:00Z"}
 ```
 
+- `schema` is the line format version; keys are written in sorted order.
 - `prev` is the SHA-256 of the previous line in the same file; the first line uses 64 zeros.
   `isv verify-log` checks every chain.
 - Events without `--change` go to `_general.jsonl`.
@@ -17,9 +18,9 @@ Each line in `.isv/log/<change>.jsonl` is one JSON object:
 
 | Event | Required | Optional |
 |---|---|---|
-| `change.started` | `tier`, `slug` | `issue` |
+| `change.started` | `tier` (T0, T1, T2), `slug` | `issue` |
 | `change.closed` | `outcome` (shipped, abandoned) | `detail` |
-| `tier.set` | `tier`, `reason` | `overridden_by` (human, agent) |
+| `tier.set` | `tier` (T0, T1, T2), `reason` | `overridden_by` (human, agent) |
 | `primer.shown` | `lines` | |
 | `decision.presented` | `decision`, `kind` (product, one-way, reversible) | `card_lines` |
 | `decision.resolved` | `decision`, `outcome` (ruled, adopted, agent-decided) | `teachback` (pass, fail, skipped) |
@@ -36,4 +37,4 @@ Each line in `.isv/log/<change>.jsonl` is one JSON object:
 
 Counts (`lines`, `pr`, `round`, `important`, …) are non-negative integers.
 
-Schema changes are additive within a major version. Renaming or removing a field bumps `v`.
+Schema changes are additive within a major version. Renaming or removing a field bumps `schema`.

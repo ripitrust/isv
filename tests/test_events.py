@@ -1,4 +1,5 @@
 import json
+import re
 import tempfile
 import threading
 import unittest
@@ -96,6 +97,23 @@ class LogTest(unittest.TestCase):
             thread.join()
         self.assertEqual(len(events.read_all(self.dir)), 20)
         self.assertEqual(events.verify_chain(self.dir), [])
+
+
+class DocTest(unittest.TestCase):
+    def test_documented_line_matches_a_written_line(self) -> None:
+        # docs/events.md is the public log format: a real line must have exactly its keys.
+        doc = (Path(__file__).resolve().parents[1] / "docs" / "events.md").read_text(encoding="utf-8")
+        match = re.search(r"```json\n(.*?)\n```", doc, re.DOTALL)
+        self.assertIsNotNone(match, "docs/events.md has no json example")
+        example = json.loads(match.group(1))
+
+        with tempfile.TemporaryDirectory() as tmp:
+            fields = {"pr": 12, "verdict": "MERGE", "rounds": 2}
+            events.append(Path(tmp), "verdict", fields, change="c", actor="agent:x/y")
+            written = json.loads((Path(tmp) / "c.jsonl").read_text(encoding="utf-8"))
+
+        self.assertEqual(list(example), list(written))
+        self.assertEqual(list(example["data"]), list(written["data"]))
 
 
 if __name__ == "__main__":
