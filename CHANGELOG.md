@@ -3,17 +3,29 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.1.6 — 2026-10-26
+
+- METHOD, README and CHANGELOG now agree with verify: RETHINK's comment carries the open finding
+  and the approach question, not a merge briefing; RETHINK wins when both verdicts apply; records
+  go on the agent's own PRs, and on someone else's only when asked.
+- verify: a PR merged before its review returned still gets its record, headed
+  `isv verdict: none (merged before the review returned)`, and the early merge is logged as an
+  override.
+- Evidence: the review of 0.1.5, which returned after its merge, found METHOD contradicting the
+  skill on RETHINK and silent on the tie-break. Three PRs in a row were merged before their
+  reviews returned.
+
 ## 0.1.5 — 2026-10-26
 
 - verify: every verdict is recorded on the PR in one comment headed `isv verdict: <VERDICT>`:
   each finding from each round with its reviewer, how it was handled (fixed in a commit, or
-  dismissed and why), and for NEEDS-HUMAN or RETHINK the briefing. It replaces 0.1.4's
-  briefing-only comment.
+  dismissed and why), and the briefing for NEEDS-HUMAN or the open finding and approach question
+  for RETHINK. It replaces 0.1.4's briefing-only comment.
 - verify, from the review of 0.1.4: NEEDS-HUMAN and RETHINK share one `needs-human` label (the
   human acts on both; the comment says which), so the documented search finds both; the search is
   scoped (`--author @me`), because unscoped it spans all of GitHub; MERGE removes the label only
   when present; RETHINK wins when both verdicts apply.
-- Evidence: the owner looked for the Codex review on two PRs and found nothing. The rounds had
+- Evidence: the owner looked for the reviews on two PRs and found nothing. The rounds had
   run locally, one of them before its PR existed, and the log keeps only counts. A fresh-context
   review of 0.1.4, which returned after its merge, found the unscoped search and the unfindable
   RETHINK label.
