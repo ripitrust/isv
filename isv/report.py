@@ -59,8 +59,8 @@ def build(events: list[Event]) -> Report:
     framed = {e.change for e in events if e.event == "change.started" and e.data["tier"] == "T2"}
     human_decisions: Counter[str] = Counter()
     teachbacks: list[str] = []
-    human_kind: set[tuple[str, str]] = set()
-    # Latest teach-back per human decision; a decision brought back as a new card counts once.
+    # Latest teach-back per human decision shown; one never resolved counts as uncovered, and a
+    # decision brought back as a new card counts once.
     human_teachback: dict[tuple[str, str], str] = {}
     explain_by_change: Counter[str] = Counter()
     explainability: list[str] = []
@@ -76,13 +76,13 @@ def build(events: list[Event]) -> Report:
                 report.closed[str(d["outcome"])] += 1
             case "decision.presented" if d["kind"] in HUMAN_DECISION_KINDS:
                 human_decisions[e.change] += 1
-                human_kind.add((e.change, str(d["decision"])))
+                human_teachback.setdefault((e.change, str(d["decision"])), "none")
             case "decision.resolved":
                 report.decision_outcomes[str(d["outcome"])] += 1
                 if d.get("teachback") in {"pass", "fail"}:
                     teachbacks.append(str(d["teachback"]))
                 key = (e.change, str(d["decision"]))
-                if key in human_kind:
+                if key in human_teachback:
                     human_teachback[key] = str(d.get("teachback", "skipped"))
             case "explain.requested":
                 report.explain_requests[str(d["stage"])] += 1

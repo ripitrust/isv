@@ -102,7 +102,7 @@ The agent stops and asks when:
 - new surface exceeds the budget;
 - the review cap is hit;
 - an acceptance check cannot be executed (it becomes a slice under the same brief, and the change
-  does not close until it has run);
+  cannot close as shipped until it has run);
 - the next action is irreversible or outward-facing.
 
 ## Comprehension

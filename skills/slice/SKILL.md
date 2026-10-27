@@ -45,10 +45,11 @@ Three modes. Log with `isv log <event> --change <id> …` (see `frame` for setup
 Run when every slice of the change has merged (`gh pr view <n> --json state`) and every acceptance
 check has run, or when the human abandons the change.
 
-1. **Every check ran.** List each acceptance check with its result and evidence (test, command
-   output, CI run). A check that has not run, including one that must run against a deployed
-   environment, blocks the close: `isv log stop.line reason=not-executable detail=…`, make it
-   runnable as a slice under the same brief (`build`), and run it.
+1. **Every check ran** (not needed to abandon). List each acceptance check with its result and
+   evidence (test, command output, CI run). A check that has not run, including one that must run
+   against a deployed environment, blocks a `shipped` close:
+   `isv log stop.line reason=not-executable detail=…`, make it runnable as a slice under the same
+   brief (`build`), and run it.
 2. **T2:** fill the brief's **Outcome** section with that list and set its status to `closed`. It
    replaces a separate summary document; ship it through the repository's normal review path.
 3. Once that has merged: `isv log change.closed --change <id> outcome=shipped|abandoned

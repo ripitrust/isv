@@ -66,9 +66,11 @@ class ReportTest(unittest.TestCase):
         _log(self.dir, "decision.presented", decision="d2", kind="product")
         _log(self.dir, "decision.resolved", decision="d2", outcome="adopted", teachback="skipped")
         _log(self.dir, "decision.resolved", decision="a1", outcome="agent-decided")
+        # Shown but never resolved: no teach-back happened, so it counts against coverage.
+        _log(self.dir, "decision.presented", decision="d3", kind="product")
 
         built = report.build(events.read_all(self.dir))
-        self.assertEqual(built.teachback_coverage, 0.5)
+        self.assertEqual(built.teachback_coverage, 0.333)
         self.assertEqual(built.teachback_first_pass, 1.0)
         self.assertIn("Teach-back coverage", report.render(built))
 
