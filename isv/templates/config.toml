@@ -17,8 +17,14 @@ max_nits = 5
 # prompt on stdin and prints findings on stdout; keep it read-only. It runs as a plain command line
 # (no shell) from the repository root, so review it like any project script. Unset: a
 # fresh-context subagent of the current agent is used.
-# external_cmd = "codex exec -s read-only --ephemeral -"     # Claude Code as the author
-# external_cmd = "claude -p --allowedTools Read,Grep,Glob"   # Codex as the author
+# external_cmd = "codex exec -s read-only --ephemeral -"                  # Claude Code as the author
+# external_cmd = "claude -p --strict-mcp-config --tools Read,Grep,Glob"   # Codex as the author
+
+# When authors use different tools: a reviewer per tool, picked by the author's <tool>
+# (`isv review --author agent:<tool>/<model>`, else ISV_ACTOR). A tool not listed here uses
+# external_cmd; an empty entry means none.
+# [review.external_cmd_by_tool]
+# codex = "claude -p --strict-mcp-config --tools Read,Grep,Glob"
 
 [risk]
 # Changes touching these paths need a human merge approval (verdict NEEDS-HUMAN).

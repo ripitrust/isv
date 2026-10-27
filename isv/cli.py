@@ -171,6 +171,24 @@ def cmd_guard(_: argparse.Namespace) -> int:
     return guard.main()
 
 
+def _reviewer(cfg: config_mod.Config, author: str) -> tuple[str, str]:
+    """(config key, command) of the reviewer for the tool that wrote the change.
+
+    agent:codex/gpt-6 → review.external_cmd_by_tool.codex when listed, else review.external_cmd.
+    """
+    tool = author.removeprefix("agent:").partition("/")[0] if author.startswith("agent:") else ""
+    if tool in cfg.review_external_cmd_by_tool:
+        return f"review.external_cmd_by_tool.{tool}", cfg.review_external_cmd_by_tool[tool]
+
+    if cfg.review_external_cmd_by_tool and not tool:
+        # The author is unknown, so the default reviewer may share its model family.
+        print(
+            "isv: no agent:<tool>/<model> author (--author or ISV_ACTOR); using review.external_cmd",
+            file=sys.stderr,
+        )
+    return "review.external_cmd", cfg.review_external_cmd
+
+
 def cmd_review(args: argparse.Namespace) -> int:
     cfg = config_mod.load()
     prompt = Path(args.prompt_file)
@@ -178,13 +196,14 @@ def cmd_review(args: argparse.Namespace) -> int:
         print(f"isv: prompt file not found: {prompt}", file=sys.stderr)
         return _EXIT_FAILED
 
+    key, command = _reviewer(cfg, _actor(args.author, ""))
     try:
-        argv = shlex.split(cfg.review_external_cmd)
+        argv = shlex.split(command)
     except ValueError:
-        print("isv: review.external_cmd is not a valid command line", file=sys.stderr)
+        print(f"isv: {key} is not a valid command line", file=sys.stderr)
         return _EXIT_FAILED
     if not argv:
-        print("isv: no review.external_cmd configured", file=sys.stderr)
+        print(f"isv: no {key} configured", file=sys.stderr)
         return _EXIT_NO_REVIEWER
 
     try:
@@ -245,8 +264,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("guard", help="hook adapter: block unsafe shell commands").set_defaults(func=cmd_guard)
 
-    rev = sub.add_parser("review", help="run the external reviewer (review.external_cmd)")
+    rev = sub.add_parser("review", help="run the external reviewer for the author's tool (review.*)")
     rev.add_argument("--prompt-file", required=True, help="prompt, passed to the reviewer on stdin")
+    rev.add_argument("--author", help="the change's agent:<tool>/<model> (default: $ISV_ACTOR)")
     rev.set_defaults(func=cmd_review)
     return parser
 

@@ -3,6 +3,25 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.1.7 — 2026-10-27
+
+- `isv review` picks the reviewer by the tool that wrote the change: `[review.external_cmd_by_tool]`
+  maps the `<tool>` of `--author agent:<tool>/<model>` (default `ISV_ACTOR`) to a command. A tool
+  not listed uses `review.external_cmd`; an empty entry means no external reviewer (exit 3). With
+  the table set and no author tool, it says so on stderr. frame step 7 and verify step 2 pass
+  `--author`; on someone else's PR, verify names that PR's tool.
+- The Claude reviewer examples use `claude -p --strict-mcp-config --tools Read,Grep,Glob`: `--tools`
+  limits the built-in tools to read-only ones, where `--allowedTools` only pre-approved them, and
+  `--strict-mcp-config` loads no MCP servers.
+- README: install from GitHub for the CLI and for the skills as a Claude Code or Codex plugin, and
+  the `.claude/settings.json` lines that make Claude Code offer the plugin in a repository.
+- This repository's config: Claude reviews what Codex writes.
+- Evidence: on 2026-10-27 Codex 0.164.0 loaded the four skills from a repository's
+  `.agents/skills/` and as a plugin from this marketplace, and a Codex session started a T2 under
+  isv in a pilot repository. Every pilot config named Codex as the one reviewer, so Codex would
+  have reviewed Codex. This change's review found that `ISV_ACTOR` names the reviewing session,
+  not the author, when verifying someone else's PR.
+
 ## 0.1.6 — 2026-10-26
 
 - METHOD, README and CHANGELOG now agree with verify: RETHINK's comment carries the open finding
