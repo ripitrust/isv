@@ -29,7 +29,7 @@ TIERS = frozenset({"T0", "T1", "T2"})
 
 # event -> (required fields, optional fields)
 EVENTS: dict[str, tuple[frozenset[str], frozenset[str]]] = {
-    "change.started": (frozenset({"tier", "slug"}), frozenset({"issue"})),
+    "change.started": (frozenset({"tier", "slug"}), frozenset({"issue", "flow"})),
     "change.closed": (frozenset({"outcome"}), frozenset({"detail"})),
     "tier.set": (frozenset({"tier", "reason"}), frozenset({"overridden_by"})),
     "primer.shown": (frozenset({"lines"}), frozenset()),
@@ -89,7 +89,7 @@ INT_FIELDS = frozenset(
 )
 BOOL_FIELDS = frozenset({"risk_path"})
 TEXT_FIELDS = frozenset({"reason", "detail", "text", "target", "step", "reviewer"})
-ID_FIELDS = frozenset({"slug", "decision", "slice", "finding"})
+ID_FIELDS = frozenset({"slug", "decision", "slice", "finding", "flow"})
 
 _ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 # Refuse obvious secrets: keys, tokens, private keys, credential assignments.

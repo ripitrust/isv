@@ -17,6 +17,11 @@ any new concept; no sentence the decider has to read twice.
 Record each step with `isv log <event> --change <YYYYMMDD-slug> k=v ...` (set `ISV_ACTOR` to
 `agent:<tool>/<model>` once per session). If `isv` is missing, say so and continue without logging.
 
+**Version:** a change runs on the flow version it started under: `flow` on its `change.started`
+(`isv trace <id>`); a change without one started before 0.1.8 and runs on 0.1.7. If that is older
+than the installed skills, follow that version's text for this change (the isv repository at tag
+`v<version>`).
+
 ## Steps
 
 1. **Tier.** Classify by the change, not by who asks:
@@ -40,8 +45,11 @@ Record each step with `isv log <event> --change <YYYYMMDD-slug> k=v ...` (set `I
    Resolution, logged with `isv log decision.resolved decision=d<n> outcome=… teachback=…`:
    - the human answers the card's check question or restates the choice in one sentence →
      `outcome=ruled teachback=pass` (or `fail`: explain again, simpler, then re-ask);
-   - the human picks without engaging → `outcome=adopted teachback=skipped` (honest, not a ruling);
+   - the human picks an option without engaging → the decision is still open: ask the check
+     question. Only if the human declines it: `outcome=adopted teachback=skipped` and
+     `isv log override step=teachback by=human reason=…`;
    - reversible choices you made → `outcome=agent-decided`.
+   What a user pays or receives, and which price applies, is a product decision, never agent-decided.
    Target: at most 3–5 human decisions per change.
 
 4. **Propose the first design yourself:** prose, one small diagram, and one or two rejected

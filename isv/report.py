@@ -29,6 +29,7 @@ class Report:
     human_decisions_per_change: float | None = None
     decision_outcomes: Counter[str] = field(default_factory=Counter)
     teachback_first_pass: float | None = None
+    teachback_coverage: float | None = None
     explain_requests: Counter[str] = field(default_factory=Counter)
     explain_per_change: float | None = None
     explainability_fail_rate: float | None = None
@@ -58,6 +59,9 @@ def build(events: list[Event]) -> Report:
     framed = {e.change for e in events if e.event == "change.started" and e.data["tier"] == "T2"}
     human_decisions: Counter[str] = Counter()
     teachbacks: list[str] = []
+    human_kind: set[tuple[str, str]] = set()
+    # Latest teach-back per human decision; a decision brought back as a new card counts once.
+    human_teachback: dict[tuple[str, str], str] = {}
     explain_by_change: Counter[str] = Counter()
     explainability: list[str] = []
     rounds: dict[int, int] = defaultdict(int)
@@ -72,10 +76,14 @@ def build(events: list[Event]) -> Report:
                 report.closed[str(d["outcome"])] += 1
             case "decision.presented" if d["kind"] in HUMAN_DECISION_KINDS:
                 human_decisions[e.change] += 1
+                human_kind.add((e.change, str(d["decision"])))
             case "decision.resolved":
                 report.decision_outcomes[str(d["outcome"])] += 1
                 if d.get("teachback") in {"pass", "fail"}:
                     teachbacks.append(str(d["teachback"]))
+                key = (e.change, str(d["decision"]))
+                if key in human_kind:
+                    human_teachback[key] = str(d.get("teachback", "skipped"))
             case "explain.requested":
                 report.explain_requests[str(d["stage"])] += 1
                 explain_by_change[e.change] += 1
@@ -114,6 +122,8 @@ def build(events: list[Event]) -> Report:
             sum(explain_by_change[c] for c in changes) / len(changes), 2
         )
     report.teachback_first_pass = _ratio(teachbacks.count("pass"), len(teachbacks))
+    covered = sum(1 for t in human_teachback.values() if t in {"pass", "fail"})
+    report.teachback_coverage = _ratio(covered, len(human_teachback))
     report.explainability_fail_rate = _ratio(explainability.count("fail"), len(explainability))
     if rounds:
         report.rounds_per_pr = round(statistics.mean(rounds.values()), 2)
@@ -171,6 +181,7 @@ def render(report: Report) -> str:
         ("Closed", report.closed),
         ("Human decisions per T2 change", report.human_decisions_per_change),
         ("Decision outcomes", report.decision_outcomes),
+        ("Teach-back coverage (human decisions)", report.teachback_coverage),
         ("Teach-back first-pass rate", report.teachback_first_pass),
         ("Explain requests per change", report.explain_per_change),
         ("Explain requests by stage", report.explain_requests),

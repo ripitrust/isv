@@ -3,7 +3,7 @@
 **Intent → Slice → Verify.** A small development flow for working with coding agents. Four
 skills, one dependency-free CLI, and a local audit log that measures whether the flow helps.
 
-Status: 0.1.7, internal beta. No results are claimed yet; `isv report` exists to produce them.
+Status: 0.1.8, internal beta. No results are claimed yet; `isv report` exists to produce them.
 
 ## What is in it
 
@@ -69,8 +69,9 @@ isv review --prompt-file F [--author A]  run the external reviewer for the autho
 isv guard                               PreToolUse hook: blocks force-push and --no-verify
 ```
 
-`isv review` passes the prompt file on stdin to `review.external_cmd` (a command line, run without
-a shell from the repository root) and returns the reviewer's output and exit code. It exits 3 when
+`isv review` passes the prompt file on stdin to `review.external_cmd` (a command line from the main
+checkout's config, run without a shell in the current checkout, so run it from the PR's head) and
+returns the reviewer's output and exit code. It exits 3 when
 no reviewer is configured or the command is not found, so callers fall back to a subagent, and 1
 when the prompt file or the command line is invalid.
 

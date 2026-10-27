@@ -3,6 +3,37 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.1.8 — 2026-10-27
+
+The retro of the first T2 change (credit-service C1) made three flow changes:
+
+- **Decisions:** a product or one-way decision closes on a teach-back; if the human declines it,
+  the decision is *adopted* and logged as an override. Changing a decision the human made stops
+  the line and brings a new card, never agent-decided. What a user pays or receives, and which
+  price applies, is a product decision. `isv report` adds teach-back coverage (human decisions
+  that had one) beside the first-pass rate, which leaves skips out.
+- **Close:** `shipped` means every acceptance check ran and passed, listed with its evidence in the
+  Outcome. A check that cannot run blocks the close and becomes a slice under the same brief.
+  `change.closed` is logged once the close PR has merged.
+- **Versions:** a change runs on the flow version it started under. `isv log change.started`
+  records it as `flow`; older versions are tagged `v<version>`. Releases apply to changes started
+  after them, and changes started before 0.1.8 finish under 0.1.7.
+
+Defect fixes: `isv review` runs the reviewer in the current checkout instead of the main one, so it
+reads the PR's files; slice cut shows the slice list for approval before it creates issues.
+
+Evidence (C1, 2026-10-26/27, from independent reviews of the work and the flow):
+- none of the 5 product or one-way decisions had a teach-back; the first-pass rate of 1.0 rested on
+  one decision (coverage, as now reported: 0.167);
+- a human decision (d4's error code) was changed as agent-decided and approved only by a merge, and
+  two money calls began as agent decisions;
+- C1 closed as shipped with acceptance check A12 never run. As designed it could not run, and
+  making it runnable took three follow-up changes outside frame and a RETHINK;
+- five flow releases landed while C1 was open (+26% flow text): old-format records, four records
+  edited after merge, and a fidelity review that never ran;
+- the reviewer read a stacked branch's files instead of the PR's, and slice cut created issues
+  before the list was approved.
+
 ## 0.1.7 — 2026-10-27
 
 - `isv review` picks the reviewer by the tool that wrote the change: `[review.external_cmd_by_tool]`

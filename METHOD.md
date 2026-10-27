@@ -1,6 +1,6 @@
 # ISV — Intent → Slice → Verify
 
-Version 0.1.7. A development flow for one human working with coding agents. It aims for
+Version 0.1.8. A development flow for one human working with coding agents. It aims for
 code that is correct, small and understood by the person who owns it, with as few human
 interruptions as that allows.
 
@@ -51,9 +51,12 @@ Everything else proceeds without asking, unless a stop-the-line condition fires.
 | one-way technical door | human | by consequence |
 | reversible technical choice | agent | recorded as agent-decided |
 
-Each human decision is a decision card (at most 12 lines) with a check question. Outcomes:
-*ruled* (the human explained it back), *adopted* (the human picked without engaging; recorded
-honestly), *agent-decided*.
+Each human decision is a decision card (at most 12 lines) with a check question. It closes on a
+teach-back: the human answers the check question or restates the choice in one sentence. Picking
+an option is not enough; if the human declines the teach-back, the decision is recorded as
+*adopted* and logged as an override. Outcomes: *ruled* (explained back), *adopted*, *agent-decided*.
+What a user pays or receives, and which price applies, is a product decision. A decision the human
+made is never changed as agent-decided: the agent stops the line and brings a new card.
 
 ## The brief
 
@@ -67,7 +70,8 @@ family when one is configured for the author's tool (`review.external_cmd`, or
 `review.external_cmd_by_tool`). There is no second pass unless the revision adds new
 surface, and then only for that part. When the last slice merges or the
 change is abandoned, `slice close` sets the brief to `closed` and fills its Outcome section, which
-replaces a separate summary document.
+replaces a separate summary document. A change closes as *shipped* only when every acceptance
+check has run and passed, with its evidence in the Outcome.
 
 ## Review
 
@@ -94,10 +98,11 @@ review returned still gets its record.
 
 The agent stops and asks when:
 
-- an assumption turns out false;
+- an assumption turns out false, or a slice needs a different answer to a decision the human made;
 - new surface exceeds the budget;
 - the review cap is hit;
-- an acceptance check cannot be executed;
+- an acceptance check cannot be executed (it becomes a slice under the same brief, and the change
+  does not close until it has run);
 - the next action is irreversible or outward-facing.
 
 ## Comprehension
@@ -112,7 +117,7 @@ The agent stops and asks when:
 `isv log` records metadata events (no code, no prompts, no secrets) to a local, hash-chained,
 per-change log. `isv report` turns the log into the flow's health metrics:
 
-- human decisions per change and teach-back pass rate;
+- human decisions per change, teach-back coverage and first-pass rate;
 - explain requests per change;
 - review rounds and reviewer precision;
 - the share of findings that remove code;
@@ -122,6 +127,14 @@ per-change log. `isv report` turns the log into the flow's health metrics:
 
 **Retro** after each T2 change and monthly. Change at most three things, bump this document's
 version, and record why in CHANGELOG.md.
+
+## Versions
+
+A change runs on the flow version it started under: `isv log change.started` records it as
+`flow`, and the change keeps that version's rules until it closes, even after a newer one is
+installed. Older versions are tagged `v<version>` in the isv repository. Releases apply to changes
+started after them; only a fix for a defect that blocks work may reach an open change, noted in
+its log. Changes started before 0.1.8 have no `flow` and finish under 0.1.7.
 
 ## Configuration
 
