@@ -40,7 +40,7 @@ class Config:
     review_max_rounds: int = 3
     review_max_nits: int = 5
     review_external_cmd: str = ""
-    # Reviewer per authoring tool, keyed by the <tool> in ISV_ACTOR (agent:<tool>/<model>).
+    # Reviewer per authoring tool, keyed by the <tool> of `isv review --author` (default ISV_ACTOR).
     review_external_cmd_by_tool: dict[str, str] = field(default_factory=dict)
     risk_paths: tuple[str, ...] = ()
     test_globs: tuple[str, ...] = DEFAULT_TEST_GLOBS

@@ -10,8 +10,9 @@ evidence that motivated it.
   not listed uses `review.external_cmd`; an empty entry means no external reviewer (exit 3). With
   the table set and no author tool, it says so on stderr. frame step 7 and verify step 2 pass
   `--author`; on someone else's PR, verify names that PR's tool.
-- The Claude reviewer examples use `claude -p --tools Read,Grep,Glob`. `--tools` limits the tools
-  available, where `--allowedTools` only pre-approved them, so the reviewer stays read-only.
+- The Claude reviewer examples use `claude -p --strict-mcp-config --tools Read,Grep,Glob`: `--tools`
+  limits the built-in tools to read-only ones, where `--allowedTools` only pre-approved them, and
+  `--strict-mcp-config` loads no MCP servers.
 - README: install from GitHub for the CLI and for the skills as a Claude Code or Codex plugin, and
   the `.claude/settings.json` lines that make Claude Code offer the plugin in a repository.
 - This repository's config: Claude reviews what Codex writes.

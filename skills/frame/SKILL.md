@@ -71,9 +71,10 @@ Record each step with `isv log <event> --change <YYYYMMDD-slug> k=v ...` (set `I
    > valid answer.
 
    **Fidelity**, a different model family: write the prompt to a file and run
-   `isv review --prompt-file <file> --author <your ISV_ACTOR> > <out>` (it picks the reviewer for
-   your tool from `.isv/config.toml` and can take minutes, so run it in the background). Exit code 3
-   means no usable external reviewer: use a second fresh-context subagent and `isv log note` why.
+   `isv review --prompt-file <file> --author agent:<tool>/<model> > <out>`, naming your own tool (it
+   picks the reviewer for it from `.isv/config.toml` and can take minutes, so run it in the
+   background). Exit code 3 means no usable external reviewer: use a second fresh-context subagent
+   and `isv log note` why.
 
    > You are checking a design brief against its sources before any code exists. Sources: <list>.
    > Return at most 10 items, each labelled exactly one of CONTRADICTION (the brief conflicts with a
