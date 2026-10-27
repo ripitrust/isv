@@ -3,6 +3,20 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.1.7 — 2026-10-27
+
+- `isv review` picks the reviewer by the author's tool: `[review.external_cmd_by_tool]` maps the
+  `<tool>` in `ISV_ACTOR` (`agent:<tool>/<model>`) to a command; a tool not listed uses
+  `review.external_cmd`, and an empty entry means no external reviewer (exit 3). With the table
+  set and no tool in `ISV_ACTOR`, it says so on stderr. verify step 2 asks for `ISV_ACTOR`.
+- README: install from GitHub for the CLI and for the skills as a Claude Code or Codex plugin, and
+  the `.claude/settings.json` lines that make Claude Code offer the plugin in a repository.
+- This repository's config: Claude reviews what Codex writes.
+- Evidence: on 2026-10-27 Codex 0.164.0 loaded the four skills from a repository's
+  `.agents/skills/` and as a plugin from this marketplace, and a Codex session started a T2 under
+  isv in a pilot repository. Every pilot config named Codex as the one reviewer, so Codex would
+  have reviewed Codex.
+
 ## 0.1.6 — 2026-10-26
 
 - METHOD, README and CHANGELOG now agree with verify: RETHINK's comment carries the open finding

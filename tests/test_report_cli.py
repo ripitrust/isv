@@ -115,20 +115,28 @@ class ReviewCommandTest(unittest.TestCase):
         self.cwd = Path.cwd()
         os.chdir(self.root)
         (self.root / "prompt.md").write_text("check this brief\n", encoding="utf-8")
+        self.actor = os.environ.pop("ISV_ACTOR", None)
 
     def tearDown(self) -> None:
         os.chdir(self.cwd)
+        os.environ.pop("ISV_ACTOR", None)
+        if self.actor is not None:
+            os.environ["ISV_ACTOR"] = self.actor
         self.tmp.cleanup()
 
-    def _configure(self, command: str) -> None:
+    def _configure(self, command: str, *, by_tool: dict[str, str] | None = None) -> None:
         (self.root / ".isv").mkdir()
         config = f'[review]\nexternal_cmd = "{command}"\n'
+        if by_tool:
+            config += "[review.external_cmd_by_tool]\n"
+            config += "".join(f'{tool} = "{cmd}"\n' for tool, cmd in by_tool.items())
         (self.root / ".isv" / "config.toml").write_text(config, encoding="utf-8")
 
     def _review(self) -> tuple[int, str]:
-        out = io.StringIO()
-        with redirect_stdout(out), redirect_stderr(io.StringIO()):
+        out, err = io.StringIO(), io.StringIO()
+        with redirect_stdout(out), redirect_stderr(err):
             code = cli.main(["review", "--prompt-file", "prompt.md"])
+        self.err = err.getvalue()
         return code, out.getvalue()
 
     def test_runs_the_reviewer_with_the_prompt_on_stdin(self) -> None:
@@ -140,6 +148,28 @@ class ReviewCommandTest(unittest.TestCase):
 
     def test_missing_reviewer_command_exits_3(self) -> None:
         self._configure("no-such-reviewer-command")
+        self.assertEqual(self._review()[0], 3)
+
+    def test_author_tool_picks_its_listed_reviewer(self) -> None:
+        self._configure("cat", by_tool={"codex": "echo claude-reviewer"})
+        os.environ["ISV_ACTOR"] = "agent:codex/gpt-6"
+        self.assertEqual(self._review(), (0, "claude-reviewer\n"))
+
+    def test_unlisted_author_tool_uses_the_default_quietly(self) -> None:
+        self._configure("cat", by_tool={"codex": "echo claude-reviewer"})
+        os.environ["ISV_ACTOR"] = "agent:claude-code/claude-opus-5-5"
+        self.assertEqual(self._review(), (0, "check this brief\n"))
+        self.assertEqual(self.err, "")
+
+    def test_unknown_author_uses_the_default_and_says_so(self) -> None:
+        # Without ISV_ACTOR the default reviewer may share the author's model family.
+        self._configure("cat", by_tool={"codex": "echo claude-reviewer"})
+        self.assertEqual(self._review(), (0, "check this brief\n"))
+        self.assertIn("ISV_ACTOR", self.err)
+
+    def test_empty_entry_for_the_author_tool_exits_3(self) -> None:
+        self._configure("cat", by_tool={"codex": ""})
+        os.environ["ISV_ACTOR"] = "agent:codex/gpt-6"
         self.assertEqual(self._review()[0], 3)
 
 

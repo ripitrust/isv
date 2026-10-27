@@ -117,6 +117,12 @@ class TemplateConfigTest(unittest.TestCase):
         pattern = raw["surface"]["detectors"][0]["pattern"]
         self.assertEqual(re.search(pattern, 'op.create_table("ledger",').group(1), "ledger")
 
+    def test_example_reviewer_table_parses_when_uncommented(self) -> None:
+        text = _template("config")
+        block = text[text.index("# [review.external_cmd_by_tool]"):text.index("[risk]")]
+        raw = tomllib.loads(re.sub(r"(?m)^# ", "", block))
+        self.assertTrue(raw["review"]["external_cmd_by_tool"]["codex"].startswith("claude "))
+
 
 if __name__ == "__main__":
     unittest.main()

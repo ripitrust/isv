@@ -3,7 +3,7 @@
 **Intent → Slice → Verify.** A small development flow for working with coding agents. Four
 skills, one dependency-free CLI, and a local audit log that measures whether the flow helps.
 
-Status: 0.1.6, internal beta. No results are claimed yet; `isv report` exists to produce them.
+Status: 0.1.7, internal beta. No results are claimed yet; `isv report` exists to produce them.
 
 ## What is in it
 
@@ -21,13 +21,37 @@ was handled. PRs waiting on you also get a `needs-human` label: `gh search prs -
 
 ## Install
 
+Each person, once, with read access to this repository:
+
 ```bash
-uv tool install --editable /path/to/isv     # or: pipx install /path/to/isv
-cd your-repo && isv init                     # writes .isv/config.toml, ignores .isv/log/
+uv tool install git+https://github.com/ripitrust/isv    # the CLI; or: pipx install git+https://github.com/ripitrust/isv
 ```
 
-The skills are a Claude Code plugin (`.claude-plugin/`). Any agent that reads `SKILL.md` files can
-use them. They call only `isv` and standard git/gh.
+| Agent | Skills, as a plugin from this repository's marketplace |
+|---|---|
+| Claude Code | `claude plugin marketplace add ripitrust/isv`, then `claude plugin install isv@isv` |
+| Codex | `codex plugin marketplace add ripitrust/isv`, then `codex plugin add isv@isv` |
+
+Both show the skills as `isv:frame`, `isv:slice`, `isv:verify` and `isv:explain`. The skills call
+only `isv` and standard git/gh; any other agent that reads `SKILL.md` files can use `skills/`
+directly. Register the marketplace from this one source on every machine, a maintainer's included,
+so it matches what repositories declare.
+
+Each repository, once:
+
+```bash
+cd your-repo && isv init     # writes .isv/config.toml, ignores .isv/log/
+```
+
+To have Claude Code offer the plugin to everyone who trusts the repository, commit this in its
+`.claude/settings.json`, with the guard hook below:
+
+```json
+{
+  "extraKnownMarketplaces": {"isv": {"source": {"source": "github", "repo": "ripitrust/isv"}}},
+  "enabledPlugins": {"isv@isv": true}
+}
+```
 
 ## CLI
 
@@ -41,7 +65,7 @@ isv check pr-body --body-file F         required PR sections present
 isv check surface --base B --body-file F   new tables/flags/RPCs/deps are declared
 isv check risk --base B                 risk paths touched → human merge
 isv template <name>                     brief | decision-card | pr-body | slice-issue | config
-isv review --prompt-file F              run the external reviewer (review.external_cmd)
+isv review --prompt-file F              run the external reviewer for the author's tool
 isv guard                               PreToolUse hook: blocks force-push and --no-verify
 ```
 
@@ -49,6 +73,11 @@ isv guard                               PreToolUse hook: blocks force-push and -
 a shell from the repository root) and returns the reviewer's output and exit code. It exits 3 when
 no reviewer is configured or the command is not found, so callers fall back to a subagent, and 1
 when the prompt file or the command line is invalid.
+
+When authors use different tools, `[review.external_cmd_by_tool]` names a reviewer per tool, picked
+by the `<tool>` in `ISV_ACTOR` (`agent:<tool>/<model>`): for example Claude reviews what Codex wrote.
+A tool not listed uses `review.external_cmd`. If the table is set and `ISV_ACTOR` names no tool,
+`isv review` says so on stderr, since the default reviewer may share the author's model family.
 
 Guard hook (`.claude/settings.json`):
 
@@ -65,6 +94,7 @@ refuses text that looks like a secret. Nothing is sent anywhere.
 ## Development
 
 ```bash
+uv tool install --editable /path/to/isv     # the CLI follows your checkout
 python3 -m unittest discover -s tests
 uvx ruff check .
 ```
