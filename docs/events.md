@@ -18,7 +18,7 @@ Each line in `.isv/log/<change>.jsonl` is one JSON object:
 
 | Event | Required | Optional |
 |---|---|---|
-| `change.started` | `tier` (T0, T1, T2), `slug` | `issue` |
+| `change.started` | `tier` (T0, T1, T2), `slug` | `issue`, `flow` (flow version; `isv log` adds the installed one) |
 | `change.closed` | `outcome` (shipped, abandoned) | `detail` |
 | `tier.set` | `tier` (T0, T1, T2), `reason` | `overridden_by` (human, agent) |
 | `primer.shown` | `lines` | |

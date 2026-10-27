@@ -12,11 +12,13 @@ Three modes. Log with `isv log <event> --change <id> …` (see `frame` for setup
 1. Split the brief into **vertical** slices: each delivers observable behaviour end to end, fits one
    pull request and one context window (aim for at most ~400 non-test lines). Order by dependency;
    put enabling refactors first.
-2. For each slice create an issue from `isv template slice-issue`: goal, acceptance checks (the brief's
-   A-ids), out of scope, dependencies, and whether it touches a **risk path** (`risk.paths` in
-   `.isv/config.toml`). `isv log slice.created slice=s<n> risk_path=true|false checks=<n> issue=<n>`.
-3. The human approves the slice list **once**. That one go-ahead covers every slice; do not ask again
-   per slice unless a stop-the-line condition fires.
+2. Show the human the slice list: each slice's goal, acceptance checks (the brief's A-ids; every
+   check belongs to a slice), dependencies, and whether it touches a **risk path** (`risk.paths` in
+   `.isv/config.toml`). The human approves the list **once**. That one go-ahead covers every slice;
+   do not ask again per slice unless a stop-the-line condition fires.
+3. Then create one issue per slice from `isv template slice-issue` (goal, acceptance checks, out of
+   scope, dependencies, risk path).
+   `isv log slice.created slice=s<n> risk_path=true|false checks=<n> issue=<n>`.
 
 ## build: slice → pull request
 
@@ -40,18 +42,26 @@ Three modes. Log with `isv log <event> --change <id> …` (see `frame` for setup
 
 ## close: change → record
 
-Run when every slice of the change has merged (`gh pr view <n> --json state`), or the human
-abandons the change.
+Run when every slice of the change has merged (`gh pr view <n> --json state`) and every acceptance
+check has run, or when the human abandons the change.
 
-1. **T2:** fill the brief's **Outcome** section and set its status to `closed`. It replaces a separate
-   summary document; ship it through the repository's normal review path.
-2. `isv log change.closed --change <id> outcome=shipped|abandoned detail=<one line>`.
+1. **Every check ran** (not needed to abandon). List each acceptance check with its result and
+   evidence (test, command output, CI run). A check that has not run, including one that must run
+   against a deployed environment, blocks a `shipped` close:
+   `isv log stop.line reason=not-executable detail=…`, make it runnable as a slice under the same
+   brief (`build`), and run it.
+2. **T2:** fill the brief's **Outcome** section with that list and set its status to `closed`. It
+   replaces a separate summary document; ship it through the repository's normal review path.
+3. Once that has merged: `isv log change.closed --change <id> outcome=shipped|abandoned
+   detail=<one line>`. `shipped` means every acceptance check ran and passed.
 
 ## Stop and ask
 
-An assumption in the brief is false (`assumption-falsified`) · new surface exceeds the brief's budget
-(`budget`) · the review round cap was hit (`cap`) · an acceptance check cannot be executed
-(`not-executable`) · the next action is irreversible or outward-facing (`irreversible`).
+An assumption in the brief is false, or a slice needs a different answer to a decision the human
+made (`assumption-falsified`: bring a new card, never record it as agent-decided) · new surface
+exceeds the brief's budget (`budget`) · the review round cap was hit (`cap`) · an acceptance check
+cannot be executed (`not-executable`) · the next action is irreversible or outward-facing
+(`irreversible`).
 `isv log stop.line reason=<code> detail=…`.
 
 Whenever you or the human skip or alter a step, `isv log override step=<step> by=<human|agent> reason=…`.

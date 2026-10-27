@@ -1,5 +1,6 @@
 import io
 import os
+import subprocess
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
@@ -58,6 +59,21 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(built.necessity_items["contradiction"], 2)
         self.assertEqual(built.review_accepted_by_lens, {"necessity": 5, "fidelity": 3})
 
+    def test_teachback_coverage_counts_skipped_human_decisions(self) -> None:
+        # A skipped teach-back must lower coverage instead of dropping out of the pass rate.
+        _log(self.dir, "decision.presented", decision="d1", kind="one-way")
+        _log(self.dir, "decision.resolved", decision="d1", outcome="ruled", teachback="pass")
+        _log(self.dir, "decision.presented", decision="d2", kind="product")
+        _log(self.dir, "decision.resolved", decision="d2", outcome="adopted", teachback="skipped")
+        _log(self.dir, "decision.resolved", decision="a1", outcome="agent-decided")
+        # Shown but never resolved: no teach-back happened, so it counts against coverage.
+        _log(self.dir, "decision.presented", decision="d3", kind="product")
+
+        built = report.build(events.read_all(self.dir))
+        self.assertEqual(built.teachback_coverage, 0.333)
+        self.assertEqual(built.teachback_first_pass, 1.0)
+        self.assertIn("Teach-back coverage", report.render(built))
+
     def test_empty_log_renders(self) -> None:
         self.assertIn("n/a", report.render(report.build([])))
 
@@ -85,6 +101,12 @@ class CliTest(unittest.TestCase):
         self.assertIn("change.started", out)
         self.assertIn("[human]", out)
         self.assertEqual(self._run("verify-log")[0], 0)
+
+    def test_change_started_records_the_flow_version(self) -> None:
+        self._run("log", "change.started", "--change", "c9", "tier=T1", "slug=x")
+        self._run("log", "change.started", "--change", "c8", "tier=T1", "slug=y", "flow=0.1.7")
+        self.assertIn(f"flow={cli.__version__}", self._run("trace", "c9")[1])
+        self.assertIn("flow=0.1.7", self._run("trace", "c8")[1])
 
     def test_fields_on_both_sides_of_an_option(self) -> None:
         # Some argparse versions stop collecting `fields` at the first option.
@@ -172,6 +194,22 @@ class ReviewCommandTest(unittest.TestCase):
         self._configure("cat", by_tool={"codex": "echo claude-reviewer"})
         self.assertEqual(self._review(), (0, "check this brief\n"))
         self.assertIn("ISV_ACTOR", self.err)
+
+    def test_the_reviewer_runs_in_the_current_checkout(self) -> None:
+        # Run from a PR's worktree, the reviewer must read the PR's files, not the main checkout's.
+        main, worktree = self.root / "main", self.root / "wt"
+        git = ["git", "-c", "user.name=t", "-c", "user.email=t@example.com"]
+        subprocess.run([*git, "init", "-q", str(main)], check=True)
+        subprocess.run([*git, "-C", str(main), "commit", "-q", "--allow-empty", "-m", "init"], check=True)
+        subprocess.run([*git, "-C", str(main), "worktree", "add", "-q", str(worktree)], check=True)
+        (main / ".isv").mkdir()
+        (main / ".isv" / "config.toml").write_text('[review]\nexternal_cmd = "pwd"\n', encoding="utf-8")
+        os.chdir(worktree)
+        (worktree / "prompt.md").write_text("check this\n", encoding="utf-8")
+
+        code, out = self._review()
+        self.assertEqual(code, 0)
+        self.assertEqual(Path(out.strip()).resolve(), worktree.resolve())
 
     def test_empty_entry_for_the_author_tool_exits_3(self) -> None:
         self._configure("cat", by_tool={"codex": ""})

@@ -66,6 +66,19 @@ def repo_root(start: Path | None = None) -> Path:
     return Path(common).parent
 
 
+def checkout_root(start: Path | None = None) -> Path:
+    """Root of the current checkout (a worktree's own root), or the start directory outside git."""
+    cwd = start or Path.cwd()
+    try:
+        top = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            cwd=cwd, capture_output=True, text=True, check=True,
+        ).stdout.strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return cwd
+    return Path(top)
+
+
 def load(start: Path | None = None) -> Config:
     root = repo_root(start)
     path = root / CONFIG_RELATIVE

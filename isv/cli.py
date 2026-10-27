@@ -75,8 +75,12 @@ def cmd_init(_: argparse.Namespace) -> int:
 
 def cmd_log(args: argparse.Namespace) -> int:
     cfg = config_mod.load()
+    fields = _parse_fields(args.fields)
+    if args.event == "change.started":
+        # A change finishes on the flow version it started under (METHOD, Versions).
+        fields.setdefault("flow", __version__)
     written = events_mod.append(
-        cfg.log_dir, args.event, _parse_fields(args.fields),
+        cfg.log_dir, args.event, fields,
         change=args.change, actor=_actor(args.actor, "agent:unknown"),
     )
     print(f"logged {written.event} #{written.seq} ({written.change})")
@@ -208,9 +212,11 @@ def cmd_review(args: argparse.Namespace) -> int:
 
     try:
         with prompt.open(encoding="utf-8") as stdin:
-            # A command line from the repository's own config, run like any project script.
+            # A command line from the main checkout's config, run like any project script. It runs
+            # in the current checkout, so a reviewer started from a PR's worktree reads the PR.
             result = subprocess.run(
-                argv, stdin=stdin, stdout=subprocess.PIPE, text=True, cwd=cfg.root, check=False
+                argv, stdin=stdin, stdout=subprocess.PIPE, text=True,
+                cwd=config_mod.checkout_root(), check=False,
             )
     except FileNotFoundError:
         print(f"isv: reviewer command not found: {argv[0]}", file=sys.stderr)

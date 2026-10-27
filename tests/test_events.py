@@ -17,6 +17,12 @@ class ValidationTest(unittest.TestCase):
         with self.assertRaises(events.EventError):
             events.validate("necessity.result", {**fields, "lens": "style"})
 
+    def test_change_started_takes_a_flow_version(self) -> None:
+        data = events.validate("change.started", {"tier": "T1", "slug": "x", "flow": "0.1.8"})
+        self.assertEqual(data["flow"], "0.1.8")
+        with self.assertRaises(events.EventError):
+            events.validate("change.started", {"tier": "T1", "slug": "x", "flow": "0.1 8"})
+
     def test_coerces_types(self) -> None:
         data = events.validate("review.round", {"pr": "12", "round": "2", "reviewer": "codex/gpt"})
         self.assertEqual(data, {"pr": 12, "round": 2, "reviewer": "codex/gpt"})
