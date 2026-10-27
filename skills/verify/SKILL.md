@@ -45,11 +45,17 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
    - **RETHINK**: the round cap is reached with an IMPORTANT finding open → stop, and bring the
      approach question to the human (`isv log stop.line reason=cap`).
 
-6. **Record it on the PR**, where the human looks. Post one comment, `gh pr comment <n> --body-file
-   <file>`, whose first line is `isv verdict: <VERDICT>`, followed by:
+6. **Record it on the PR**, where the human looks, and tell the human the verdict in the
+   conversation. Post one comment with `gh pr comment <n> --body-file <file>`. Its first line is
+   `isv verdict: <VERDICT>`, followed by:
    - every finding from every round, one line each: round, reviewer, label, what it says with its
-     file:line, and the response (fixed in <commit>, or dismissed and why);
+     file:line, and the response (fixed in <commit or PR>, or dismissed and why);
    - for NEEDS-HUMAN, the briefing; for RETHINK, the open finding and the approach question.
+
+   If the PR merged before the review returned, fix what holds in a follow-up PR, then still post
+   the record, naming that PR, with first line
+   `isv verdict: none (merged before the review returned)`, and
+   `isv log override step=verify by=human reason=…`.
 
    NEEDS-HUMAN and RETHINK both wait on the human, so both get the same label:
 
@@ -59,9 +65,9 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
    ```
 
    On MERGE, remove it if an earlier round added it: check `gh pr view <n> --json labels`, then
-   `gh pr edit <n> --remove-label needs-human`. Say the same in the conversation. The human lists
-   everything waiting on them with `gh search prs --state open --label needs-human --author @me`
-   (when agents open PRs under the human's account; otherwise scope it with `--owner <org>`).
+   `gh pr edit <n> --remove-label needs-human`. The human lists everything waiting on them with
+   `gh search prs --state open --label needs-human --author @me` (when agents open PRs under the
+   human's account; otherwise scope it with `--owner <org>`).
 
 On someone else's pull request: run the same review, do not merge, and do not label or comment
 unless the human asks.

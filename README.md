@@ -3,7 +3,7 @@
 **Intent → Slice → Verify.** A small development flow for working with coding agents. Four
 skills, one dependency-free CLI, and a local audit log that measures whether the flow helps.
 
-Status: 0.1.5, internal beta. No results are claimed yet; `isv report` exists to produce them.
+Status: 0.1.6, internal beta. No results are claimed yet; `isv report` exists to produce them.
 
 ## What is in it
 
@@ -16,8 +16,8 @@ Status: 0.1.5, internal beta. No results are claimed yet; `isv report` exists to
 | `skills/explain` | Plain-words explanation grounded in the code, one level at a time |
 | `isv` CLI | Event log, report, audit trace, PR checks, templates, a push guard hook |
 
-Every reviewed PR gets one `isv verdict:` comment with its findings and how each was handled. PRs
-waiting on you also get a `needs-human` label: `gh search prs --state open --label needs-human --author @me`.
+Each PR an agent opens and reviews gets one `isv verdict:` comment with its findings and how each
+was handled. PRs waiting on you also get a `needs-human` label: `gh search prs --state open --label needs-human --author @me`.
 
 ## Install
 
