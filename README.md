@@ -65,7 +65,7 @@ isv check pr-body --body-file F         required PR sections present
 isv check surface --base B --body-file F   new tables/flags/RPCs/deps are declared
 isv check risk --base B                 risk paths touched → human merge
 isv template <name>                     brief | decision-card | pr-body | slice-issue | config
-isv review --prompt-file F              run the external reviewer for the author's tool
+isv review --prompt-file F [--author A]  run the external reviewer for the author's tool
 isv guard                               PreToolUse hook: blocks force-push and --no-verify
 ```
 
@@ -75,8 +75,9 @@ no reviewer is configured or the command is not found, so callers fall back to a
 when the prompt file or the command line is invalid.
 
 When authors use different tools, `[review.external_cmd_by_tool]` names a reviewer per tool, picked
-by the `<tool>` in `ISV_ACTOR` (`agent:<tool>/<model>`): for example Claude reviews what Codex wrote.
-A tool not listed uses `review.external_cmd`. If the table is set and `ISV_ACTOR` names no tool,
+by the `<tool>` of the change's author: `--author agent:<tool>/<model>`, or `ISV_ACTOR` without it.
+For example, Claude reviews what Codex wrote. A tool not listed uses `review.external_cmd`; an empty
+entry means no external reviewer (exit 3). If the table is set and no author tool is given,
 `isv review` says so on stderr, since the default reviewer may share the author's model family.
 
 Guard hook (`.claude/settings.json`):

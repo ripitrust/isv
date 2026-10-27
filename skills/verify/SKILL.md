@@ -14,10 +14,11 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
 
 2. **Review with fresh context.** A reviewer that did not write the code: a subagent with no
    conversation history. When the PR touches a risk path, use a **different model family** instead:
-   write the material and prompt to a file and run `isv review --prompt-file <file> > <out>` with
-   `ISV_ACTOR=agent:<tool>/<model>` set, since it picks the reviewer for the author's tool (exit
-   code 3: none is usable, so use the subagent and `isv log note` why). Give the reviewer the material
-   above and this prompt:
+   write the material and prompt to a file and run
+   `isv review --prompt-file <file> --author agent:<tool>/<model> > <out>`, naming the tool that wrote
+   the change: yours on your own PR; on someone else's, theirs when its commits or body show it. It
+   picks the reviewer for that tool (exit code 3: none is usable, so use the subagent and
+   `isv log note` why). Give the reviewer the material above and this prompt:
 
    > Review this pull request on two axes. SPEC: is every acceptance check met; is anything partial
    > (including the docs of a public API or contract it changes), wrong, or beyond scope?

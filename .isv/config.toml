@@ -16,7 +16,7 @@ max_nits = 5
 external_cmd = "codex exec -s read-only --ephemeral -"   # different model family
 
 [review.external_cmd_by_tool]
-codex = "claude -p --allowedTools Read,Grep,Glob"   # Claude reviews what Codex writes
+codex = "claude -p --tools Read,Grep,Glob"   # Claude reviews what Codex writes
 
 [risk]
 # Changes touching these paths need a human merge approval (verdict NEEDS-HUMAN).

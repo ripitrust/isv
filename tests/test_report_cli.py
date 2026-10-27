@@ -132,10 +132,10 @@ class ReviewCommandTest(unittest.TestCase):
             config += "".join(f'{tool} = "{cmd}"\n' for tool, cmd in by_tool.items())
         (self.root / ".isv" / "config.toml").write_text(config, encoding="utf-8")
 
-    def _review(self) -> tuple[int, str]:
+    def _review(self, *extra: str) -> tuple[int, str]:
         out, err = io.StringIO(), io.StringIO()
         with redirect_stdout(out), redirect_stderr(err):
-            code = cli.main(["review", "--prompt-file", "prompt.md"])
+            code = cli.main(["review", "--prompt-file", "prompt.md", *extra])
         self.err = err.getvalue()
         return code, out.getvalue()
 
@@ -161,8 +161,14 @@ class ReviewCommandTest(unittest.TestCase):
         self.assertEqual(self._review(), (0, "check this brief\n"))
         self.assertEqual(self.err, "")
 
+    def test_author_option_overrides_the_session_actor(self) -> None:
+        # Verifying someone else's PR: the author's tool, not the reviewing session's, decides.
+        self._configure("cat", by_tool={"codex": "echo claude-reviewer"})
+        os.environ["ISV_ACTOR"] = "agent:claude-code/claude-opus-5-5"
+        self.assertEqual(self._review("--author", "agent:codex/gpt-6"), (0, "claude-reviewer\n"))
+
     def test_unknown_author_uses_the_default_and_says_so(self) -> None:
-        # Without ISV_ACTOR the default reviewer may share the author's model family.
+        # Without an author tool the default reviewer may share the author's model family.
         self._configure("cat", by_tool={"codex": "echo claude-reviewer"})
         self.assertEqual(self._review(), (0, "check this brief\n"))
         self.assertIn("ISV_ACTOR", self.err)
