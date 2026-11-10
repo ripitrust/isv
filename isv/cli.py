@@ -288,6 +288,6 @@ def main(argv: list[str] | None = None) -> int:
         args.fields += extra
     try:
         return int(args.func(args))
-    except events_mod.EventError as exc:
+    except (events_mod.EventError, checks.CheckError) as exc:
         print(f"isv: {exc}", file=sys.stderr)
         return _EXIT_FAILED
