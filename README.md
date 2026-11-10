@@ -34,11 +34,8 @@ The full rules are in [METHOD.md](METHOD.md).
                       │ once               │ once                  MERGE / NEEDS-HUMAN / RETHINK
 ```
 
-| Tier | What | Flow |
-|---|---|---|
-| T0 patch | Bug fix, copy, config value, dependency bump; no new behaviour | change → `verify` |
-| T1 slice | New behaviour inside the existing design | `slice build` → `verify` → `slice close` |
-| T2 design | New subsystem, data model, contract, money or security rule, irreversible step | `frame` → `slice cut` → `slice build` × n → `verify` × n → `slice close` |
+Each change gets a tier: **T0** patch (verify only), **T1** slice (build, verify, close) or **T2**
+design (frame first). [METHOD.md § Tiers](METHOD.md#tiers) says which is which.
 
 | Skill | What it does |
 |---|---|
@@ -92,10 +89,10 @@ Agents log each step with `isv log` and name themselves with `ISV_ACTOR=agent:<t
   in practice, a recommendation, and a check question. Reply with your choice *and* your answer to
   the check, for example `A — the user ends with 8,000 credits`. A bare choice is asked again once;
   say "skip" to close it without answering, which is logged.
-- **A brief** in `project.docs_dir` (at most 250 lines): the problem in five plain sentences, the
-  design, rejected alternatives, your decisions, a surface budget (every new table, flag, RPC or
-  dependency, and why an existing one can't do the job), and acceptance checks that must fail on a
-  wrong implementation. You approve it once, and the slice list once.
+- **A brief** in `project.docs_dir` (at most 250 lines): a summary of at most five plain sentences,
+  the problem, the design, rejected alternatives, your decisions, a surface budget (every new table,
+  flag, RPC or dependency, and why an existing one can't do the job), and acceptance checks that
+  must fail on a wrong implementation. You approve it once, and the slice list once.
 - **One record comment per PR**, starting `isv verdict: <VERDICT>`, listing every review finding and
   how it was handled. PRs waiting on you carry a `needs-human` label:
 
@@ -103,11 +100,9 @@ Agents log each step with `isv log` and name themselves with `ISV_ACTOR=agent:<t
   gh search prs --state open --label needs-human --author @me
   ```
 
-| Verdict | Means | Who acts |
-|---|---|---|
-| MERGE | Nothing important open, no risk path touched | merge per the repository's rules |
-| NEEDS-HUMAN | A risk path is touched; the comment carries a short briefing | you approve the merge |
-| RETHINK | The round cap was hit with an important finding open | you decide the approach |
+The verdict is MERGE (nothing important open, no risk path: merge per the repository's rules),
+NEEDS-HUMAN (a risk path is touched: you approve the merge) or RETHINK (the round cap was hit with
+an important finding open: you decide the approach); see [METHOD.md § Review](METHOD.md#review).
 
 ## Configuration
 
@@ -198,9 +193,9 @@ Each change runs on the flow version it started under (`flow` on its `change.sta
 never changes the rules of work already in progress. Releases are tagged `v<version>`. To update:
 
 ```bash
-uv tool upgrade isv
+uv tool upgrade isv                  # or: pipx upgrade isv
 claude plugin marketplace update isv && claude plugin update isv@isv
-codex plugin marketplace upgrade
+codex plugin marketplace upgrade && codex plugin add isv@isv
 ```
 
 ## Privacy and security

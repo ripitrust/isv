@@ -62,7 +62,7 @@ made is never changed as agent-decided: the agent stops the line and brings a ne
 ## The brief
 
 One file per T2 change, at most `brief.max_lines` lines, written from `isv template brief`.
-It opens with five plain sentences anyone can read. It holds decisions, a **surface budget**
+It opens with at most five plain sentences anyone can read. It holds decisions, a **surface budget**
 (every new thing and why an existing one cannot do it) and **executable acceptance checks**, each of
 which must fail on a wrong implementation: the brief names one mutation per check.
 Before approval, two fresh-context reviewers make one pass in parallel: **necessity** (remove,
