@@ -100,9 +100,9 @@ Agents log each step with `isv log` and name themselves with `ISV_ACTOR=agent:<t
   gh search prs --state open --label needs-human --author @me
   ```
 
-The verdict is MERGE, NEEDS-HUMAN (a risk path is touched: you approve the merge) or RETHINK (the
-round cap was hit with an important finding open: you decide the approach); see
-[METHOD.md § Review](METHOD.md#review).
+The verdict is MERGE (nothing important open, no risk path: merge per the repository's rules),
+NEEDS-HUMAN (a risk path is touched: you approve the merge) or RETHINK (the round cap was hit with
+an important finding open: you decide the approach); see [METHOD.md § Review](METHOD.md#review).
 
 ## Configuration
 
