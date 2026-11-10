@@ -73,7 +73,12 @@ class CheckError(RuntimeError):
 
 
 def _git(args: list[str], cwd: Path) -> str:
-    result = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, check=False)
+    try:
+        result = subprocess.run(
+            ["git", *args], cwd=cwd, capture_output=True, text=True, check=False
+        )
+    except FileNotFoundError:
+        raise CheckError("git not found on PATH") from None
     if result.returncode != 0:
         # Every caller diffs against a base ref, and a missing one is the usual cause.
         reason = result.stderr.strip().splitlines()[0] if result.stderr.strip() else "failed"
@@ -82,7 +87,8 @@ def _git(args: list[str], cwd: Path) -> str:
 
 
 def changed_files(base: str, cwd: Path) -> list[str]:
-    return [line for line in _git(["diff", "--name-only", f"{base}...HEAD"], cwd).splitlines() if line]
+    names = _git(["diff", "--name-only", f"{base}...HEAD"], cwd)
+    return [line for line in names.splitlines() if line]
 
 
 def detect_surface(base: str, config: Config, cwd: Path) -> list[Finding]:
