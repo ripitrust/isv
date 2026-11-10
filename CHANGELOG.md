@@ -10,8 +10,8 @@ retro rule allows three (logged as an override).
 
 - **Teach-back asked, not assumed:** the decision card ends with "Reply with: your choice and your
   answer to the check". A reply with only a choice is re-asked once; only the human's explicit skip
-  closes a decision as *adopted*, logged as their override, and a bare choice is never logged as one.
-  `isv report` counts skips without that override.
+  closes a decision as *adopted* with `teachback=declined` (plus their override), and a bare choice
+  is never logged as one. `isv report` counts skips that have no `declined`.
 - **Stopping rules:** another review round runs only for an open IMPORTANT finding or changed
   behaviour code. A round with only nits ends the review; a comment, doc or test-only fix needs no new
   round, logged as `review.skipped`. Fixes that grew the diff are cut before the next round.

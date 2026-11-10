@@ -23,6 +23,7 @@ Three modes. Log with `isv log <event> --change <id> …` (see `frame` for setup
 ## build: slice → pull request
 
 1. **Read** the brief (T2) and the issue. Restate the acceptance checks as tests and see them fail.
+   A check without a named mutation (every T1 check, which has no brief) gets one here.
    A T1 change has no `frame` step, so open it here:
    `isv log change.started --change <YYYYMMDD-slug> tier=T1 slug=<slug> issue=<n>`.
 2. **Smallest change that works**, taking the first rung that fully solves it: does it need to exist →

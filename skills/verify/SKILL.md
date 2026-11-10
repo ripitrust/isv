@@ -41,7 +41,9 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
    behaviour code changed: a round with only nits ends the review once they are fixed or dismissed,
    and a fix that changes only comments, docs or tests needs no new round
    (`isv log review.skipped pr=<n> round=<r> reason=…`). If the fixes grew the diff, cut before the
-   next round. Reaching the cap is not approval.
+   next round. Reaching the cap is not approval. If a still-open IMPORTANT finding traces back to the
+   premise an earlier fix already relied on, stop for the premise before another fix (slice's "Same
+   premise twice").
 
 5. **Verdict** — `isv log verdict pr=<n> verdict=… rounds=<r>` (if both NEEDS-HUMAN and RETHINK apply,
    RETHINK):

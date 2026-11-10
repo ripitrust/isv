@@ -62,7 +62,8 @@ ENUMS: dict[str, frozenset[str]] = {
     "overridden_by": frozenset({"human", "agent"}),
     "kind": frozenset({"product", "one-way", "reversible"}),
     "outcome": frozenset({"ruled", "adopted", "agent-decided", "shipped", "abandoned"}),
-    "teachback": frozenset({"pass", "fail", "skipped"}),
+    # declined: the human explicitly skipped the check; skipped: no teach-back happened.
+    "teachback": frozenset({"pass", "fail", "declined", "skipped"}),
     "stage": frozenset({"frame", "slice", "verify", "other"}),
     "result": frozenset({"pass", "fail"}),
     "response": frozenset({"fixed", "wrong", "intentional", "not-worth", "pre-existing"}),

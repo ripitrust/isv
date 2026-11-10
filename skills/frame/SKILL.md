@@ -47,7 +47,7 @@ than the installed skills, follow that version's text for this change (the isv r
      `outcome=ruled teachback=pass` (or `fail`: explain again, simpler, then re-ask);
    - the human replies with only a choice → the decision is still open: ask the check question
      once more. Only the human's explicit skip ("skip", "no check") closes it:
-     `outcome=adopted teachback=skipped` and
+     `outcome=adopted teachback=declined` and
      `isv log override step=teachback by=human reason=explicit-skip`. Never log a bare choice as
      the human's override;
    - reversible choices you made → `outcome=agent-decided`.

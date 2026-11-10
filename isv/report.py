@@ -64,9 +64,6 @@ def build(events: list[Event]) -> Report:
     # Latest teach-back per human decision shown; one never resolved counts as uncovered, and a
     # decision brought back as a new card counts once.
     human_teachback: dict[tuple[str, str], str] = {}
-    # Only the human's explicit skip, logged as their teachback override, may close a decision
-    # without a teach-back; any other skip is the agent's miss.
-    explicit_skips: Counter[str] = Counter()
     explain_by_change: Counter[str] = Counter()
     explainability: list[str] = []
     rounds: dict[int, int] = defaultdict(int)
@@ -115,8 +112,6 @@ def build(events: list[Event]) -> Report:
                 report.stop_lines[str(d["reason"])] += 1
             case "override":
                 report.overrides[str(d["step"])] += 1
-                if d["step"] == "teachback" and d["by"] == "human":
-                    explicit_skips[e.change] += 1
             case "review.skipped":
                 report.review_rounds_skipped += 1
             case "note":
@@ -133,10 +128,8 @@ def build(events: list[Event]) -> Report:
     report.teachback_first_pass = _ratio(teachbacks.count("pass"), len(teachbacks))
     covered = sum(1 for t in human_teachback.values() if t in {"pass", "fail"})
     report.teachback_coverage = _ratio(covered, len(human_teachback))
-    skipped: Counter[str] = Counter(c for (c, _), t in human_teachback.items() if t == "skipped")
-    report.teachback_unexplained_skips = sum(
-        max(0, n - explicit_skips[change]) for change, n in skipped.items()
-    )
+    # Only the decision's own `declined` (the human's explicit skip) explains a missing teach-back.
+    report.teachback_unexplained_skips = sum(1 for t in human_teachback.values() if t == "skipped")
     report.explainability_fail_rate = _ratio(explainability.count("fail"), len(explainability))
     if rounds:
         report.rounds_per_pr = round(statistics.mean(rounds.values()), 2)
