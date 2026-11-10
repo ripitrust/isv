@@ -30,7 +30,10 @@ Three modes. Log with `isv log <event> --change <id> …` (see `frame` for setup
    **Never cut:** validation at trust boundaries, error handling that prevents data loss, security,
    money and precision invariants, anything the brief requires. Complete every affected caller and test,
    and update the docs of any public API or contract the slice changes, in the same PR.
-3. **Run the project's checks** (tests, lint, types, migrations) and keep the output.
+3. **Run the project's checks** (tests, lint, types, migrations) and keep the output. On a risk path,
+   prove each acceptance check can fail: make its named mutation (by hand or with a mutation tool),
+   see its test go red, and restore the code. A test that stays green is too weak: fix the test.
+   Record the mutations in the PR body's Verification.
 4. **Self-check with fresh eyes:** a subagent with no history reads the diff once for bugs and for
    code that can be deleted. Apply what holds.
 5. **PR body** from `isv template pr-body`. Then run locally:
@@ -63,5 +66,10 @@ exceeds the brief's budget (`budget`) · the review round cap was hit (`cap`) ·
 cannot be executed (`not-executable`) · the next action is irreversible or outward-facing
 (`irreversible`).
 `isv log stop.line reason=<code> detail=…`.
+
+**Same premise twice:** when a second stop, failed fix or RETHINK traces back to a premise already
+hit once, write that premise in one sentence
+(`isv log stop.line reason=assumption-falsified detail="premise: …"`) and bring the human a way to
+remove or replace it. Do not start a third fix on it.
 
 Whenever you or the human skip or alter a step, `isv log override step=<step> by=<human|agent> reason=…`.

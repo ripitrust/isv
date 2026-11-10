@@ -117,6 +117,12 @@ class TemplateConfigTest(unittest.TestCase):
         pattern = raw["surface"]["detectors"][0]["pattern"]
         self.assertEqual(re.search(pattern, 'op.create_table("ledger",').group(1), "ledger")
 
+    def test_decision_card_asks_for_the_teachback_answer(self) -> None:
+        # A card that only shows its check question lets a bare choice pass for a ruling.
+        card = _template("decision-card")
+        self.assertIn("**Reply with:**", card)
+        self.assertLess(card.index("**Check:**"), card.index("**Reply with:**"))
+
     def test_example_reviewer_table_parses_when_uncommented(self) -> None:
         text = _template("config")
         block = text[text.index("# [review.external_cmd_by_tool]"):text.index("[risk]")]

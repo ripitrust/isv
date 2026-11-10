@@ -51,6 +51,7 @@ EVENTS: dict[str, tuple[frozenset[str], frozenset[str]]] = {
     ),
     "finding.resolved": (frozenset({"pr", "finding", "response"}), frozenset({"reason"})),
     "verdict": (frozenset({"pr", "verdict", "rounds"}), frozenset()),
+    "review.skipped": (frozenset({"pr", "round"}), frozenset({"reason"})),
     "stop.line": (frozenset({"reason"}), frozenset({"detail"})),
     "override": (frozenset({"step", "by", "reason"}), frozenset()),
     "note": (frozenset({"text"}), frozenset()),

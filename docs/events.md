@@ -31,6 +31,7 @@ Each line in `.isv/log/<change>.jsonl` is one JSON object:
 | `review.round` | `pr`, `round`, `reviewer` | `important`, `nit`, `pre_existing`, `removal` |
 | `finding.resolved` | `pr`, `finding`, `response` (fixed, wrong, intentional, not-worth, pre-existing) | `reason` |
 | `verdict` | `pr`, `verdict` (MERGE, NEEDS-HUMAN, RETHINK), `rounds` | |
+| `review.skipped` | `pr`, `round` | `reason` |
 | `stop.line` | `reason` (assumption-falsified, budget, cap, not-executable, irreversible) | `detail` |
 | `override` | `step`, `by` (human, agent), `reason` | |
 | `note` | `text` | |

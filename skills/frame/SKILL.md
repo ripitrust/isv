@@ -45,9 +45,11 @@ than the installed skills, follow that version's text for this change (the isv r
    Resolution, logged with `isv log decision.resolved decision=d<n> outcome=… teachback=…`:
    - the human answers the card's check question or restates the choice in one sentence →
      `outcome=ruled teachback=pass` (or `fail`: explain again, simpler, then re-ask);
-   - the human picks an option without engaging → the decision is still open: ask the check
-     question. Only if the human declines it: `outcome=adopted teachback=skipped` and
-     `isv log override step=teachback by=human reason=…`;
+   - the human replies with only a choice → the decision is still open: ask the check question
+     once more. Only the human's explicit skip ("skip", "no check") closes it:
+     `outcome=adopted teachback=skipped` and
+     `isv log override step=teachback by=human reason=explicit-skip`. Never log a bare choice as
+     the human's override;
    - reversible choices you made → `outcome=agent-decided`.
    What a user pays or receives, and which price applies, is a product decision, never agent-decided.
    Target: at most 3–5 human decisions per change.
@@ -62,7 +64,8 @@ than the installed skills, follow that version's text for this change (the isv r
 6. **Write the brief** from `isv template brief`, within `brief.max_lines`. Fill the **Surface
    budget**: every new table, flag, RPC, service or dependency, each with why an existing one cannot
    do it, naming what you checked. Acceptance checks must be executable (a command or test and its
-   expected result).
+   expected result) and must fail on a wrong implementation: for each, name one mutation of the code
+   that turns it red (drop the lock, round down, skip the audit row).
 
 7. **Brief review — one round, two reviewers in parallel, no loop.** Each reviewer has **fresh
    context** and gets only the brief, repository access, the sources of truth the brief cites (design
