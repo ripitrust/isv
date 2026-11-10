@@ -4,7 +4,7 @@ A small development flow for people who build software with coding agents (Claud
 It sizes the process to the change, puts your attention on real decisions and risky merges, keeps
 review bounded, and logs metadata so you can measure whether the flow helps.
 
-Four skills, one dependency-free Python CLI, and a local audit log. Status: **0.2.1, beta**, used
+Four skills, one dependency-free Python CLI, and a local audit log. Status: **0.2.2, beta**, used
 on real work in several repositories since 2026-10-26. [CHANGELOG.md](CHANGELOG.md) records what
 changed and the evidence for each change; [docs/decisions](docs/decisions) records the lasting
 design decisions.

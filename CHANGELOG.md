@@ -3,6 +3,13 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.2.2 — 2026-11-10
+
+- `isv check risk` and `isv check surface` exit 1 with git's reason and a `--base` hint when the
+  base ref is missing, instead of a traceback. A new local repository has no `origin/main`, the
+  default base.
+- Evidence: the review of 0.2.1 hit the traceback in a fresh repository.
+
 ## 0.2.1 — 2026-11-10
 
 Public release; no flow change.

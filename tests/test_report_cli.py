@@ -237,6 +237,16 @@ class ReviewCommandTest(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(Path(out.strip()).resolve(), worktree.resolve())
 
+    def test_check_with_a_missing_base_ref_fails_cleanly(self) -> None:
+        # A new local repo has no origin/main; say so instead of raising a traceback.
+        subprocess.run(["git", "init", "-q"], check=True)
+        out, err = io.StringIO(), io.StringIO()
+        with redirect_stdout(out), redirect_stderr(err):
+            code = cli.main(["check", "risk", "--base", "origin/main"])
+        self.assertEqual(code, 1)
+        self.assertIn("origin/main", err.getvalue())
+        self.assertIn("--base", err.getvalue())
+
     def test_empty_entry_for_the_author_tool_exits_3(self) -> None:
         self._configure("cat", by_tool={"codex": ""})
         os.environ["ISV_ACTOR"] = "agent:codex/gpt-6"
