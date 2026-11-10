@@ -3,10 +3,10 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
-## 0.1.9 — 2026-11-10
+## 0.2.0 — 2026-11-10
 
-The two-week review (2026-11-02, 2026-11-10) made four flow changes; the owner chose four where the
-retro rule allows three (logged as an override).
+The two-week review (2026-11-02, 2026-11-10) made four flow changes, and the owner added a fifth;
+the retro rule allows three (logged as an override). The minor version marks the larger release.
 
 - **Teach-back asked, not assumed:** the decision card ends with "Reply with: your choice and your
   answer to the check". A reply with only a choice is re-asked once; only the human's explicit skip
@@ -19,6 +19,9 @@ retro rule allows three (logged as an override).
   a risk path, slice build makes the mutation, sees the test go red, and records it in the PR body.
 - **Attack the Premise:** a second stop, failed fix or RETHINK from the same premise stops for the
   premise itself, stated in one sentence, instead of a third fix.
+- **Lasting decisions get an ADR:** at close, a decision that is hard to reverse, surprising and a
+  real trade-off gets a one-paragraph ADR in the new `project.adr_dir`; without one, the brief stays
+  the record.
 
 Evidence (two weeks, 5 repositories, 88 PRs, 168 review rounds):
 - 16 of 33 human decisions closed without a teach-back in week 2. Transcripts show the owner replying
@@ -30,6 +33,9 @@ Evidence (two weeks, 5 repositories, 88 PRs, 168 review rounds):
   that stays green under a float bug (pb-credit-public-api).
 - The same premise failed repeatedly: auth-service S1 stopped 4 times on one staging-window
   assumption; M4 needed a second review after two falsified premises.
+- isv never mentioned ADRs: since 10-26 they appeared only where a repository's own rules asked
+  (ottertrade 3, quandora-backend 8 from another flow), and nothing indexed decisions across
+  briefs; three repositories keep their briefs git-ignored.
 
 ## 0.1.8 — 2026-10-27
 

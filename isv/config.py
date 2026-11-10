@@ -35,6 +35,7 @@ class Detector:
 class Config:
     root: Path
     docs_dir: str = "docs/designs"
+    adr_dir: str = ""  # unset: the brief's Decisions table is the only decision record
     brief_max_lines: int = 250
     t0_max_changed_lines: int = 100
     review_max_rounds: int = 3
@@ -95,6 +96,7 @@ def load(start: Path | None = None) -> Config:
     return Config(
         root=root,
         docs_dir=project.get("docs_dir", Config.docs_dir),
+        adr_dir=project.get("adr_dir", Config.adr_dir),
         brief_max_lines=raw.get("brief", {}).get("max_lines", Config.brief_max_lines),
         t0_max_changed_lines=raw.get("tiers", {}).get(
             "t0_max_changed_lines", Config.t0_max_changed_lines

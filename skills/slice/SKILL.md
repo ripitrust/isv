@@ -54,9 +54,14 @@ check has run, or when the human abandons the change.
    against a deployed environment, blocks a `shipped` close:
    `isv log stop.line reason=not-executable detail=…`, make it runnable as a slice under the same
    brief (`build`), and run it.
-2. **T2:** fill the brief's **Outcome** section with that list and set its status to `closed`. It
-   replaces a separate summary document; ship it through the repository's normal review path.
-3. Once that has merged: `isv log change.closed --change <id> outcome=shipped|abandoned
+2. **Lasting decisions.** A decision this change made that is hard to reverse, surprising, and a
+   real trade-off gets a one-paragraph ADR in `project.adr_dir`, in the repository's own ADR format:
+   context, decision, the rejected alternative, and a link to the brief or PR. One that replaces an
+   earlier ADR names it. Without `adr_dir`, the brief's Decisions table is the record.
+3. **T2:** fill the brief's **Outcome** section with that list (and any ADRs) and set its status to
+   `closed`. It replaces a separate summary document; ship it through the repository's normal review
+   path.
+4. Once that has merged: `isv log change.closed --change <id> outcome=shipped|abandoned
    detail=<one line>`. `shipped` means every acceptance check ran and passed.
 
 ## Stop and ask

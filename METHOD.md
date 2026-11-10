@@ -1,6 +1,6 @@
 # ISV — Intent → Slice → Verify
 
-Version 0.1.9. A development flow for one human working with coding agents. It aims for
+Version 0.2.0. A development flow for one human working with coding agents. It aims for
 code that is correct, small and understood by the person who owns it, with as few human
 interruptions as that allows.
 
@@ -72,7 +72,9 @@ family when one is configured for the author's tool (`review.external_cmd`, or
 `review.external_cmd_by_tool`). There is no second pass unless the revision adds new
 surface, and then only for that part. When the last slice merges or the
 change is abandoned, `slice close` sets the brief to `closed` and fills its Outcome section, which
-replaces a separate summary document. A change closes as *shipped* only when every acceptance
+replaces a separate summary document. A decision that is hard to reverse, surprising and a real
+trade-off also gets a one-paragraph ADR in `project.adr_dir`, so it stays findable after the change
+closes; without one, the brief is the record. A change closes as *shipped* only when every acceptance
 check has run and passed, with its evidence in the Outcome.
 
 ## Review
