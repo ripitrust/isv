@@ -244,7 +244,7 @@ class ReviewCommandTest(unittest.TestCase):
         with redirect_stdout(out), redirect_stderr(err):
             code = cli.main(["check", "risk", "--base", "origin/main"])
         self.assertEqual(code, 1)
-        self.assertIn("origin/main", err.getvalue())
+        self.assertIn("unknown revision", err.getvalue())
         self.assertIn("--base", err.getvalue())
 
     def test_empty_entry_for_the_author_tool_exits_3(self) -> None:

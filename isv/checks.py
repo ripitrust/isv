@@ -77,7 +77,7 @@ def _git(args: list[str], cwd: Path) -> str:
     if result.returncode != 0:
         # Every caller diffs against a base ref, and a missing one is the usual cause.
         reason = result.stderr.strip().splitlines()[0] if result.stderr.strip() else "failed"
-        raise CheckError(f"git {' '.join(args)}: {reason} (pass --base <ref> that exists)")
+        raise CheckError(f"git {' '.join(args)}: {reason} (check --base)")
     return result.stdout
 
 
