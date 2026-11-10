@@ -1,6 +1,6 @@
 # ISV — Intent → Slice → Verify
 
-Version 0.2.0. A development flow for one human working with coding agents. It aims for
+Version 0.2.1. A development flow for one human working with coding agents. It aims for
 code that is correct, small and understood by the person who owns it, with as few human
 interruptions as that allows.
 

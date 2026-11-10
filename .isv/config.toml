@@ -2,6 +2,7 @@
 
 [project]
 docs_dir = "docs/designs"          # where briefs live (one file per change)
+adr_dir = "docs/decisions"         # lasting decisions get an ADR at close
 # test_globs = ["tests/**"]        # excluded from PR size metrics
 
 [tiers]

@@ -3,6 +3,17 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.2.1 — 2026-11-10
+
+Public release; no flow change.
+
+- MIT licence; README rewritten for someone new to isv (quickstart, daily use, what you'll see,
+  every config key, reviewers, team setup, updates); CONTRIBUTING.md.
+- isv's own lasting decisions are recorded as ADRs in `docs/decisions` (0001–0004), and its config
+  sets `adr_dir`.
+- Package and plugin metadata: licence, author, links.
+- CHANGELOG evidence names pilot work generically instead of by internal repository.
+
 ## 0.2.0 — 2026-11-10
 
 The two-week review (2026-11-02, 2026-11-10) made four flow changes, and the owner added a fifth;
@@ -25,21 +36,22 @@ the retro rule allows three (logged as an override). The minor version marks the
 
 Evidence (two weeks, 5 repositories, 88 PRs, 168 review rounds):
 - 16 of 33 human decisions closed without a teach-back in week 2. Transcripts show the owner replying
-  with a choice because the card never asked for the answer; where agents re-asked (C2, six times),
-  every second reply was a correct teach-back. One agent logged the owner's picks as his overrides.
+  with a choice because the card never asked for the answer; where agents re-asked (a payments change, six times),
+  every second reply was a correct teach-back. One agent logged the owner's picks as the owner's own
+  overrides.
 - 19 review rounds returned only nits, and 4 were still followed by another round; nits tripled in
   week 2 (171).
-- Agents mutated code by hand to prove tests (catalog-ci, credit-e2e); a review found a precision test
-  that stays green under a float bug (pb-credit-public-api).
-- The same premise failed repeatedly: auth-service S1 stopped 4 times on one staging-window
-  assumption; M4 needed a second review after two falsified premises.
+- Agents mutated code by hand to prove tests (two pilot changes); a review found a precision test
+  that stays green under a float bug (a payments API change).
+- The same premise failed repeatedly: a security change stopped 4 times on one staging-window
+  assumption; a payout change needed a second review after two falsified premises.
 - isv never mentioned ADRs: since 10-26 they appeared only where a repository's own rules asked
-  (ottertrade 3, quandora-backend 8 from another flow), and nothing indexed decisions across
+  (3 and 8 in two pilot repositories, the 8 from another team's flow), and nothing indexed decisions across
   briefs; three repositories keep their briefs git-ignored.
 
 ## 0.1.8 — 2026-10-27
 
-The retro of the first T2 change (credit-service C1) made three flow changes:
+The retro of the first T2 change (C1, a ledger service) made three flow changes:
 
 - **Decisions:** a product or one-way decision closes on a teach-back; if the human declines it,
   the decision is *adopted* and logged as an override. Changing a decision the human made stops

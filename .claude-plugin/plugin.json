@@ -1,6 +1,19 @@
 {
   "name": "isv",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Intent → Slice → Verify: a small, measured development flow for working with coding agents.",
-  "keywords": ["sdlc", "workflow", "code-review", "design", "audit"]
+  "keywords": [
+    "sdlc",
+    "workflow",
+    "code-review",
+    "design",
+    "audit"
+  ],
+  "author": {
+    "name": "ripitrust",
+    "url": "https://github.com/ripitrust"
+  },
+  "homepage": "https://github.com/ripitrust/isv",
+  "repository": "https://github.com/ripitrust/isv",
+  "license": "MIT"
 }
