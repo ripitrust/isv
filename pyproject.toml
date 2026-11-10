@@ -1,10 +1,27 @@
 [project]
 name = "isv"
-version = "0.2.0"
+version = "0.2.1"
 description = "Intent → Slice → Verify: a lean, tool-agnostic flow for agent-assisted software development"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "ripitrust" }]
 requires-python = ">=3.11"
 dependencies = []
+keywords = ["sdlc", "workflow", "code-review", "coding-agents", "claude-code", "codex"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Software Development :: Quality Assurance",
+]
+
+[project.urls]
+Homepage = "https://github.com/ripitrust/isv"
+Changelog = "https://github.com/ripitrust/isv/blob/main/CHANGELOG.md"
+Issues = "https://github.com/ripitrust/isv/issues"
 
 [project.scripts]
 isv = "isv.cli:main"
