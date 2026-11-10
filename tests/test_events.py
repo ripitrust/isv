@@ -17,6 +17,12 @@ class ValidationTest(unittest.TestCase):
         with self.assertRaises(events.EventError):
             events.validate("necessity.result", {**fields, "lens": "style"})
 
+    def test_review_skipped_needs_a_pr_and_round(self) -> None:
+        data = events.validate("review.skipped", {"pr": "4", "round": "2", "reason": "doc-only fix"})
+        self.assertEqual((data["pr"], data["round"]), (4, 2))
+        with self.assertRaises(events.EventError):
+            events.validate("review.skipped", {"pr": "4"})
+
     def test_change_started_takes_a_flow_version(self) -> None:
         data = events.validate("change.started", {"tier": "T1", "slug": "x", "flow": "0.1.8"})
         self.assertEqual(data["flow"], "0.1.8")

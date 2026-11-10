@@ -23,7 +23,7 @@ Each line in `.isv/log/<change>.jsonl` is one JSON object:
 | `tier.set` | `tier` (T0, T1, T2), `reason` | `overridden_by` (human, agent) |
 | `primer.shown` | `lines` | |
 | `decision.presented` | `decision`, `kind` (product, one-way, reversible) | `card_lines` |
-| `decision.resolved` | `decision`, `outcome` (ruled, adopted, agent-decided) | `teachback` (pass, fail, skipped) |
+| `decision.resolved` | `decision`, `outcome` (ruled, adopted, agent-decided) | `teachback` (pass, fail, declined, skipped) |
 | `explain.requested` | `target`, `stage` (frame, slice, verify, other) | `depth` |
 | `explainability.test` | `result` (pass, fail) | |
 | `necessity.result` (one per brief reviewer) | `remove`, `ask`, `missing_check` | `accepted_remove`, `accepted_ask`, `accepted_missing_check`, `lens` (necessity, fidelity; absent counts as necessity), `reviewer`, `contradiction`, `accepted_contradiction` |
@@ -31,6 +31,7 @@ Each line in `.isv/log/<change>.jsonl` is one JSON object:
 | `review.round` | `pr`, `round`, `reviewer` | `important`, `nit`, `pre_existing`, `removal` |
 | `finding.resolved` | `pr`, `finding`, `response` (fixed, wrong, intentional, not-worth, pre-existing) | `reason` |
 | `verdict` | `pr`, `verdict` (MERGE, NEEDS-HUMAN, RETHINK), `rounds` | |
+| `review.skipped` | `pr`, `round` | `reason` |
 | `stop.line` | `reason` (assumption-falsified, budget, cap, not-executable, irreversible) | `detail` |
 | `override` | `step`, `by` (human, agent), `reason` | |
 | `note` | `text` | |

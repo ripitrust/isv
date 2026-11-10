@@ -23,6 +23,7 @@ Three modes. Log with `isv log <event> --change <id> …` (see `frame` for setup
 ## build: slice → pull request
 
 1. **Read** the brief (T2) and the issue. Restate the acceptance checks as tests and see them fail.
+   A check without a named mutation (every T1 check, which has no brief) gets one here.
    A T1 change has no `frame` step, so open it here:
    `isv log change.started --change <YYYYMMDD-slug> tier=T1 slug=<slug> issue=<n>`.
 2. **Smallest change that works**, taking the first rung that fully solves it: does it need to exist →
@@ -30,7 +31,10 @@ Three modes. Log with `isv log <event> --change <id> …` (see `frame` for setup
    **Never cut:** validation at trust boundaries, error handling that prevents data loss, security,
    money and precision invariants, anything the brief requires. Complete every affected caller and test,
    and update the docs of any public API or contract the slice changes, in the same PR.
-3. **Run the project's checks** (tests, lint, types, migrations) and keep the output.
+3. **Run the project's checks** (tests, lint, types, migrations) and keep the output. On a risk path,
+   prove each acceptance check can fail: make its named mutation (by hand or with a mutation tool),
+   see its test go red, and restore the code. A test that stays green is too weak: fix the test.
+   Record the mutations in the PR body's Verification.
 4. **Self-check with fresh eyes:** a subagent with no history reads the diff once for bugs and for
    code that can be deleted. Apply what holds.
 5. **PR body** from `isv template pr-body`. Then run locally:
@@ -50,9 +54,14 @@ check has run, or when the human abandons the change.
    against a deployed environment, blocks a `shipped` close:
    `isv log stop.line reason=not-executable detail=…`, make it runnable as a slice under the same
    brief (`build`), and run it.
-2. **T2:** fill the brief's **Outcome** section with that list and set its status to `closed`. It
-   replaces a separate summary document; ship it through the repository's normal review path.
-3. Once that has merged: `isv log change.closed --change <id> outcome=shipped|abandoned
+2. **Lasting decisions.** A decision this change made that is hard to reverse, surprising, and a
+   real trade-off gets a one-paragraph ADR in `project.adr_dir`, in the repository's own ADR format:
+   context, decision, the rejected alternative, and a link to the brief or PR. One that replaces an
+   earlier ADR names it. Without `adr_dir`, the brief's Decisions table is the record.
+3. **T2:** fill the brief's **Outcome** section with that list (and any ADRs) and set its status to
+   `closed`. It replaces a separate summary document; ship it through the repository's normal review
+   path.
+4. Once that has merged: `isv log change.closed --change <id> outcome=shipped|abandoned
    detail=<one line>`. `shipped` means every acceptance check ran and passed.
 
 ## Stop and ask
@@ -63,5 +72,10 @@ exceeds the brief's budget (`budget`) · the review round cap was hit (`cap`) ·
 cannot be executed (`not-executable`) · the next action is irreversible or outward-facing
 (`irreversible`).
 `isv log stop.line reason=<code> detail=…`.
+
+**Same premise twice:** when a second stop, failed fix or RETHINK traces back to a premise already
+hit once, write that premise in one sentence
+(`isv log stop.line reason=assumption-falsified detail="premise: …"`) and bring the human a way to
+remove or replace it. Do not start a third fix on it.
 
 Whenever you or the human skip or alter a step, `isv log override step=<step> by=<human|agent> reason=…`.

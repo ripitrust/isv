@@ -37,7 +37,13 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
    pre-existing, each with a one-line reason. `isv log finding.resolved pr=<n> finding=f<k> response=…`.
 
 4. **Rounds:** at most `review.max_rounds` (default 3). From round 2, review only the new diff plus
-   still-open IMPORTANT findings.
+   still-open IMPORTANT findings. Run another round only when an IMPORTANT finding is open or
+   behaviour code changed: a round with only nits ends the review once they are fixed or dismissed,
+   and a fix that changes only comments, docs or tests needs no new round
+   (`isv log review.skipped pr=<n> round=<r> reason=…`). If the fixes grew the diff, cut before the
+   next round. Reaching the cap is not approval. If a still-open IMPORTANT finding traces back to the
+   premise an earlier fix already relied on, stop for the premise before another fix (slice's "Same
+   premise twice").
 
 5. **Verdict** — `isv log verdict pr=<n> verdict=… rounds=<r>` (if both NEEDS-HUMAN and RETHINK apply,
    RETHINK):
@@ -47,7 +53,8 @@ Log with `isv log <event> --change <id> …` (see `frame` for setup).
      deploy, a migration); the checks that ran and any that did not; how to roll back. The human
      approves the merge.
    - **RETHINK**: the round cap is reached with an IMPORTANT finding open → stop, and bring the
-     approach question to the human (`isv log stop.line reason=cap`).
+     approach question to the human, naming the premise the failing fixes share
+     (`isv log stop.line reason=cap`).
 
 6. **Record it on the PR**, where the human looks, and tell the human the verdict in the
    conversation. Post one comment with `gh pr comment <n> --body-file <file>`. Its first line is

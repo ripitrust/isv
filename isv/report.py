@@ -30,6 +30,7 @@ class Report:
     decision_outcomes: Counter[str] = field(default_factory=Counter)
     teachback_first_pass: float | None = None
     teachback_coverage: float | None = None
+    teachback_unexplained_skips: int = 0
     explain_requests: Counter[str] = field(default_factory=Counter)
     explain_per_change: float | None = None
     explainability_fail_rate: float | None = None
@@ -38,6 +39,7 @@ class Report:
     review_accepted_by_lens: Counter[str] = field(default_factory=Counter)
     rounds_per_pr: float | None = None
     max_rounds: int = 0
+    review_rounds_skipped: int = 0
     reviewer_precision: float | None = None
     finding_responses: Counter[str] = field(default_factory=Counter)
     removal_share: float | None = None
@@ -110,6 +112,8 @@ def build(events: list[Event]) -> Report:
                 report.stop_lines[str(d["reason"])] += 1
             case "override":
                 report.overrides[str(d["step"])] += 1
+            case "review.skipped":
+                report.review_rounds_skipped += 1
             case "note":
                 report.notes.append(f"{e.ts[:10]} {e.change}: {d['text']}")
 
@@ -124,6 +128,8 @@ def build(events: list[Event]) -> Report:
     report.teachback_first_pass = _ratio(teachbacks.count("pass"), len(teachbacks))
     covered = sum(1 for t in human_teachback.values() if t in {"pass", "fail"})
     report.teachback_coverage = _ratio(covered, len(human_teachback))
+    # Only the decision's own `declined` (the human's explicit skip) explains a missing teach-back.
+    report.teachback_unexplained_skips = sum(1 for t in human_teachback.values() if t == "skipped")
     report.explainability_fail_rate = _ratio(explainability.count("fail"), len(explainability))
     if rounds:
         report.rounds_per_pr = round(statistics.mean(rounds.values()), 2)
@@ -183,6 +189,7 @@ def render(report: Report) -> str:
         ("Decision outcomes", report.decision_outcomes),
         ("Teach-back coverage (human decisions)", report.teachback_coverage),
         ("Teach-back first-pass rate", report.teachback_first_pass),
+        ("Teach-back skipped without your skip", report.teachback_unexplained_skips),
         ("Explain requests per change", report.explain_per_change),
         ("Explain requests by stage", report.explain_requests),
         ("Explainability fail rate", report.explainability_fail_rate),
@@ -191,6 +198,7 @@ def render(report: Report) -> str:
         ("Brief review accepted by lens", report.review_accepted_by_lens),
         ("Review rounds per PR (mean)", report.rounds_per_pr),
         ("Review rounds, max", report.max_rounds or None),
+        ("Review rounds skipped", report.review_rounds_skipped),
         ("Reviewer precision (fixed / resolved)", report.reviewer_precision),
         ("Finding responses", report.finding_responses),
         ("Removal share of findings", report.removal_share),

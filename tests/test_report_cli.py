@@ -74,6 +74,32 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(built.teachback_first_pass, 1.0)
         self.assertIn("Teach-back coverage", report.render(built))
 
+    def test_a_skipped_teachback_without_the_humans_skip_is_counted(self) -> None:
+        # Only the decision's own record of the human declining explains a skip; an override with
+        # any reason, or another decision's decline, must not hide it.
+        _log(self.dir, "decision.presented", change="c1", decision="d1", kind="one-way")
+        _log(self.dir, "decision.resolved", change="c1", decision="d1", outcome="adopted",
+             teachback="skipped")
+        _log(self.dir, "override", change="c1", step="teachback", by="human", reason="owner picked A")
+        _log(self.dir, "decision.presented", change="c2", decision="d1", kind="product")
+        _log(self.dir, "decision.resolved", change="c2", decision="d1", outcome="adopted",
+             teachback="declined")
+        _log(self.dir, "decision.presented", change="c2", decision="d2", kind="product")
+        _log(self.dir, "decision.resolved", change="c2", decision="d2", outcome="adopted",
+             teachback="skipped")
+
+        built = report.build(events.read_all(self.dir))
+        self.assertEqual(built.teachback_unexplained_skips, 2)
+        self.assertIn("Teach-back skipped without your skip", report.render(built))
+
+    def test_skipped_review_rounds_are_counted(self) -> None:
+        _log(self.dir, "review.round", pr=4, round=1, reviewer="codex", important=0, nit=3)
+        _log(self.dir, "review.skipped", pr=4, round=2, reason="nits only")
+
+        built = report.build(events.read_all(self.dir))
+        self.assertEqual(built.review_rounds_skipped, 1)
+        self.assertIn("Review rounds skipped", report.render(built))
+
     def test_empty_log_renders(self) -> None:
         self.assertIn("n/a", report.render(report.build([])))
 

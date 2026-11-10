@@ -1,6 +1,6 @@
 # ISV — Intent → Slice → Verify
 
-Version 0.1.8. A development flow for one human working with coding agents. It aims for
+Version 0.2.0. A development flow for one human working with coding agents. It aims for
 code that is correct, small and understood by the person who owns it, with as few human
 interruptions as that allows.
 
@@ -52,9 +52,10 @@ Everything else proceeds without asking, unless a stop-the-line condition fires.
 | reversible technical choice | agent | recorded as agent-decided |
 
 Each human decision is a decision card (at most 12 lines) with a check question. It closes on a
-teach-back: the human answers the check question or restates the choice in one sentence. Picking
-an option is not enough; if the human declines the teach-back, the decision is recorded as
-*adopted* and logged as an override. Outcomes: *ruled* (explained back), *adopted*, *agent-decided*.
+teach-back: the human answers the check question or restates the choice in one sentence, and the
+card asks for both in one reply. A reply with only a choice is not enough: the agent asks the check
+question once more, and only the human's explicit skip closes the decision as *adopted*, logged as
+their override. Outcomes: *ruled* (explained back), *adopted*, *agent-decided*.
 What a user pays or receives, and which price applies, is a product decision. A decision the human
 made is never changed as agent-decided: the agent stops the line and brings a new card.
 
@@ -62,7 +63,8 @@ made is never changed as agent-decided: the agent stops the line and brings a ne
 
 One file per T2 change, at most `brief.max_lines` lines, written from `isv template brief`.
 It opens with five plain sentences anyone can read. It holds decisions, a **surface budget**
-(every new thing and why an existing one cannot do it) and **executable acceptance checks**.
+(every new thing and why an existing one cannot do it) and **executable acceptance checks**, each of
+which must fail on a wrong implementation: the brief names one mutation per check.
 Before approval, two fresh-context reviewers make one pass in parallel: **necessity** (remove,
 question, flag missing checks) and **fidelity** (contradictions with the brief's sources or with
 itself, missed boundary cases). Neither may add mechanisms. Fidelity runs on a different model
@@ -70,7 +72,9 @@ family when one is configured for the author's tool (`review.external_cmd`, or
 `review.external_cmd_by_tool`). There is no second pass unless the revision adds new
 surface, and then only for that part. When the last slice merges or the
 change is abandoned, `slice close` sets the brief to `closed` and fills its Outcome section, which
-replaces a separate summary document. A change closes as *shipped* only when every acceptance
+replaces a separate summary document. A decision that is hard to reverse, surprising and a real
+trade-off also gets a one-paragraph ADR in `project.adr_dir`, so it stays findable after the change
+closes; without one, the brief is the record. A change closes as *shipped* only when every acceptance
 check has run and passed, with its evidence in the Outcome.
 
 ## Review
@@ -78,7 +82,9 @@ check has run and passed, with its evidence in the Outcome.
 A PR that changes a public API or contract updates its docs in the same PR. Risk-path PRs are
 reviewed by a different model family when one is configured for the author's tool.
 At most `review.max_rounds` rounds. From round 2, the reviewer sees only the new diff and still-open
-IMPORTANT findings. Each finding needs file:line or a failing case and is IMPORTANT, NIT (capped)
+IMPORTANT findings. Another round runs only for an open IMPORTANT finding or changed behaviour code:
+a round with only nits ends the review, and a comment, doc or test-only fix needs no new round.
+Each finding needs file:line or a failing case and is IMPORTANT, NIT (capped)
 or PRE-EXISTING. Verdicts:
 
 - **MERGE**: nothing IMPORTANT open, no risk path touched.
@@ -101,6 +107,8 @@ The agent stops and asks when:
 - an assumption turns out false, or a slice needs a different answer to a decision the human made;
 - new surface exceeds the budget;
 - the review cap is hit;
+- a second stop, failed fix or RETHINK comes from the same premise: the agent states that premise in
+  one sentence and proposes removing it, rather than a third fix;
 - an acceptance check cannot be executed (it becomes a slice under the same brief, and the change
   cannot close as shipped until it has run);
 - the next action is irreversible or outward-facing.
@@ -117,9 +125,10 @@ The agent stops and asks when:
 `isv log` records metadata events (no code, no prompts, no secrets) to a local, hash-chained,
 per-change log. `isv report` turns the log into the flow's health metrics:
 
-- human decisions per change, teach-back coverage and first-pass rate;
+- human decisions per change, teach-back coverage and first-pass rate, and skips without the
+  human's explicit skip;
 - explain requests per change;
-- review rounds and reviewer precision;
+- review rounds, rounds skipped, and reviewer precision;
 - the share of findings that remove code;
 - verdicts, stop-lines and overrides.
 

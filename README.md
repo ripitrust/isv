@@ -3,7 +3,7 @@
 **Intent → Slice → Verify.** A small development flow for working with coding agents. Four
 skills, one dependency-free CLI, and a local audit log that measures whether the flow helps.
 
-Status: 0.1.8, internal beta. No results are claimed yet; `isv report` exists to produce them.
+Status: 0.2.0, internal beta. No results are claimed yet; `isv report` exists to produce them.
 
 ## What is in it
 

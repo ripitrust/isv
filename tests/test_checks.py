@@ -117,6 +117,21 @@ class TemplateConfigTest(unittest.TestCase):
         pattern = raw["surface"]["detectors"][0]["pattern"]
         self.assertEqual(re.search(pattern, 'op.create_table("ledger",').group(1), "ledger")
 
+    def test_project_adr_dir_loads_and_defaults_to_none(self) -> None:
+        from isv import config as config_mod
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.assertEqual(config_mod.load(root).adr_dir, "")
+            (root / ".isv").mkdir()
+            (root / ".isv" / "config.toml").write_text('[project]\nadr_dir = "docs/decisions"\n')
+            self.assertEqual(config_mod.load(root).adr_dir, "docs/decisions")
+
+    def test_decision_card_asks_for_the_teachback_answer(self) -> None:
+        # A card that only shows its check question lets a bare choice pass for a ruling.
+        card = _template("decision-card")
+        self.assertIn("**Reply with:**", card)
+        self.assertLess(card.index("**Check:**"), card.index("**Reply with:**"))
+
     def test_example_reviewer_table_parses_when_uncommented(self) -> None:
         text = _template("config")
         block = text[text.index("# [review.external_cmd_by_tool]"):text.index("[risk]")]

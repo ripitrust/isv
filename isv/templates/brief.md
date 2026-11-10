@@ -36,7 +36,7 @@ change: <YYYYMMDD-slug> · tier: T2 · status: draft | approved | closed · flow
 | <name> | table / flag / RPC / service / dependency | <reason, naming what you checked> |
 
 ## Acceptance checks
-- A1 <executable: command or test and the expected result>
+- A1 <executable: command or test and the expected result> · mutation: <code change that turns it red>
 
 ## Slices
 | # | Slice | Checks | Risk path | Depends on |

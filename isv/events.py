@@ -51,6 +51,7 @@ EVENTS: dict[str, tuple[frozenset[str], frozenset[str]]] = {
     ),
     "finding.resolved": (frozenset({"pr", "finding", "response"}), frozenset({"reason"})),
     "verdict": (frozenset({"pr", "verdict", "rounds"}), frozenset()),
+    "review.skipped": (frozenset({"pr", "round"}), frozenset({"reason"})),
     "stop.line": (frozenset({"reason"}), frozenset({"detail"})),
     "override": (frozenset({"step", "by", "reason"}), frozenset()),
     "note": (frozenset({"text"}), frozenset()),
@@ -61,7 +62,8 @@ ENUMS: dict[str, frozenset[str]] = {
     "overridden_by": frozenset({"human", "agent"}),
     "kind": frozenset({"product", "one-way", "reversible"}),
     "outcome": frozenset({"ruled", "adopted", "agent-decided", "shipped", "abandoned"}),
-    "teachback": frozenset({"pass", "fail", "skipped"}),
+    # declined: the human explicitly skipped the check; skipped: no teach-back happened.
+    "teachback": frozenset({"pass", "fail", "declined", "skipped"}),
     "stage": frozenset({"frame", "slice", "verify", "other"}),
     "result": frozenset({"pass", "fail"}),
     "response": frozenset({"fixed", "wrong", "intentional", "not-worth", "pre-existing"}),
