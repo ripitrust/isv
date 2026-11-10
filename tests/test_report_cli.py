@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from unittest import mock
 
 from isv import cli, events, report
 
@@ -246,6 +247,16 @@ class ReviewCommandTest(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("unknown revision", err.getvalue())
         self.assertIn("--base", err.getvalue())
+
+    def test_check_without_git_fails_cleanly(self) -> None:
+        empty = self.root / "empty-path"
+        empty.mkdir()
+        out, err = io.StringIO(), io.StringIO()
+        no_git = mock.patch.dict(os.environ, {"PATH": str(empty)})
+        with no_git, redirect_stdout(out), redirect_stderr(err):
+            code = cli.main(["check", "risk", "--base", "origin/main"])
+        self.assertEqual(code, 1)
+        self.assertIn("git not found", err.getvalue())
 
     def test_empty_entry_for_the_author_tool_exits_3(self) -> None:
         self._configure("cat", by_tool={"codex": ""})

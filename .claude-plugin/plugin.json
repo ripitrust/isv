@@ -1,6 +1,6 @@
 {
   "name": "isv",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Intent → Slice → Verify: a small, measured development flow for working with coding agents.",
   "keywords": [
     "sdlc",

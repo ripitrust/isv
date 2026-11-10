@@ -3,6 +3,12 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.2.3 — 2026-11-10
+
+- `isv check risk` and `isv check surface` exit 1 with "git not found on PATH" instead of a
+  traceback when git is missing, as the config and report code already handled it.
+- Evidence: the review of 0.2.2 found the uncaught `FileNotFoundError` in `checks._git`.
+
 ## 0.2.2 — 2026-11-10
 
 - `isv check risk` and `isv check surface` exit 1 with git's reason and a `--base` hint when the
