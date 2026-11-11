@@ -1,6 +1,6 @@
 # ISV — Intent → Slice → Verify
 
-Version 0.2.3. A development flow for one human working with coding agents. It aims for
+Version 0.2.4. A development flow for one human working with coding agents. It aims for
 code that is correct, small and understood by the person who owns it, with as few human
 interruptions as that allows.
 
@@ -51,7 +51,8 @@ Everything else proceeds without asking, unless a stop-the-line condition fires.
 | one-way technical door | human | by consequence |
 | reversible technical choice | agent | recorded as agent-decided |
 
-Each human decision is a decision card (at most 12 lines) with a check question. It closes on a
+Each human decision is a decision card (at most 12 lines) with a check question and an Explain
+choice, which explains the card and shows it again without closing it. A decision closes on a
 teach-back: the human answers the check question or restates the choice in one sentence, and the
 card asks for both in one reply. A reply with only a choice is not enough: the agent asks the check
 question once more, and only the human's explicit skip closes the decision as *adopted*, logged as

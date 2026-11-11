@@ -13,5 +13,8 @@ description: Explain a part of the system, a pull request, a decision or a term 
    data model", "the failure cases", "why it was built this way").
 4. **Never change code** in this skill.
 5. If the confusion came from a brief, PR body or comment, propose the one-line fix to that text.
+6. **A decision card** (its Explain choice): walk through each option as a scenario, say why the
+   recommendation holds, then show the same card again instead of offering a next level; choosing
+   Explain again goes one level deeper. Its decision stays open.
 
 Log each request: `isv log explain.requested --change <id> target=<area> stage=frame|slice|verify|other depth=<n>`.

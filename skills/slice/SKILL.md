@@ -67,8 +67,9 @@ check has run, or when the human abandons the change.
 ## Stop and ask
 
 An assumption in the brief is false, or a slice needs a different answer to a decision the human
-made (`assumption-falsified`: bring a new card, never record it as agent-decided) · new surface
-exceeds the brief's budget (`budget`) · the review round cap was hit (`cap`) · an acceptance check
+made (`assumption-falsified`: bring a new card as in `frame` step 3, with `stage=slice` for
+Explain; never record it as agent-decided) · new surface exceeds the brief's budget (`budget`) ·
+the review round cap was hit (`cap`) · an acceptance check
 cannot be executed (`not-executable`) · the next action is irreversible or outward-facing
 (`irreversible`).
 `isv log stop.line reason=<code> detail=…`.
