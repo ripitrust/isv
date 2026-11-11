@@ -1,6 +1,6 @@
 [project]
 name = "isv"
-version = "0.2.3"
+version = "0.2.4"
 description = "Intent → Slice → Verify: a lean, tool-agnostic flow for agent-assisted software development"
 readme = "README.md"
 license = "MIT"

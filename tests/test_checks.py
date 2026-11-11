@@ -132,6 +132,12 @@ class TemplateConfigTest(unittest.TestCase):
         self.assertIn("**Reply with:**", card)
         self.assertLess(card.index("**Check:**"), card.index("**Reply with:**"))
 
+    def test_decision_card_offers_explain(self) -> None:
+        # The card itself names the explain reply, so a tool without buttons still offers it.
+        card = _template("decision-card")
+        reply = card[card.index("**Reply with:**"):]
+        self.assertIn('"explain"', reply)
+
     def test_example_reviewer_table_parses_when_uncommented(self) -> None:
         text = _template("config")
         block = text[text.index("# [review.external_cmd_by_tool]"):text.index("[risk]")]

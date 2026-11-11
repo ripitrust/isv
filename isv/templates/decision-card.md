@@ -6,4 +6,4 @@
 **Recommendation:** <A or B> — <the main reason, one line>
 **If we're wrong:** <cost of changing it later; say if it is one-way>
 **Check:** <one question the decider can answer only if they understood>
-**Reply with:** your choice and your answer to the check, e.g. "A — <answer>".
+**Reply with:** your choice and your answer to the check, e.g. "A — <answer>", or "explain".

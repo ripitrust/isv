@@ -3,6 +3,14 @@
 Flow (METHOD.md, skills) and CLI share one version. Each entry says what changed and the
 evidence that motivated it.
 
+## 0.2.4 — 2026-11-11
+
+- Decision cards offer an **Explain** choice (a button where the tool shows choices, else the
+  reply "explain"). It runs `explain` on the decision and shows the same card again; the decision
+  stays open, since an explanation is not a teach-back.
+- Evidence: in pilot use the human repeatedly typed a request to explain a card before choosing,
+  because its buttons offered only the options.
+
 ## 0.2.3 — 2026-11-10
 
 - `isv check risk` and `isv check surface` exit 1 with "git not found on PATH" instead of a

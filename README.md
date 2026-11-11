@@ -4,7 +4,7 @@ A small development flow for people who build software with coding agents (Claud
 It sizes the process to the change, puts your attention on real decisions and risky merges, keeps
 review bounded, and logs metadata so you can measure whether the flow helps.
 
-Four skills, one dependency-free Python CLI, and a local audit log. Status: **0.2.3, beta**, used
+Four skills, one dependency-free Python CLI, and a local audit log. Status: **0.2.4, beta**, used
 on real work in several repositories since 2026-10-26. [CHANGELOG.md](CHANGELOG.md) records what
 changed and the evidence for each change; [docs/decisions](docs/decisions) records the lasting
 design decisions.
@@ -88,7 +88,8 @@ Agents log each step with `isv log` and name themselves with `ISV_ACTOR=agent:<t
 - **Decision cards**, one at a time, each with a plain question, options described by what happens
   in practice, a recommendation, and a check question. Reply with your choice *and* your answer to
   the check, for example `A — the user ends with 8,000 credits`. A bare choice is asked again once;
-  say "skip" to close it without answering, which is logged.
+  say "skip" to close it without answering, which is logged. Choose **Explain** (or reply
+  "explain") to have the card explained and shown again.
 - **A brief** in `project.docs_dir` (at most 250 lines): a summary of at most five plain sentences,
   the problem, the design, rejected alternatives, your decisions, a surface budget (every new table,
   flag, RPC or dependency, and why an existing one can't do the job), and acceptance checks that

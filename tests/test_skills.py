@@ -24,5 +24,17 @@ class SkillCoverageTest(unittest.TestCase):
         self.assertEqual(missing, [])
 
 
+class DecisionCardTest(unittest.TestCase):
+    def test_frame_offers_explain_and_keeps_the_decision_open(self) -> None:
+        # Explaining is not a teach-back: the card comes back and the decision stays open.
+        text = (SKILLS / "frame" / "SKILL.md").read_text(encoding="utf-8")
+
+        self.assertIn("**Explain**", text)
+        self.assertIn("stage=frame", text)
+        self.assertIn("show the same card again", text)
+        self.assertIn("An explanation is not a teach-back", text)
+        self.assertIn("stays open", text)
+
+
 if __name__ == "__main__":
     unittest.main()

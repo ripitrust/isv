@@ -42,6 +42,11 @@ than the installed skills, follow that version's text for this change (the isv r
 
    Present human decisions **one at a time** as decision cards (`isv template decision-card`, at most
    12 lines). For each: `isv log decision.presented decision=d<n> kind=<kind>`.
+   Offer **Explain** as the last choice: a button where your tool shows choices, the card's
+   "explain" reply where it does not or the options already fill its button limit. When it is
+   chosen, run `explain` on the decision (`target=d<n> stage=frame depth=<n>`, one deeper each time
+   on the same card) and show the same card again. An explanation is not a teach-back: the decision
+   stays open.
    Resolution, logged with `isv log decision.resolved decision=d<n> outcome=… teachback=…`:
    - the human answers the card's check question or restates the choice in one sentence →
      `outcome=ruled teachback=pass` (or `fail`: explain again, simpler, then re-ask);
