@@ -14,7 +14,7 @@ max_lines = 250
 [review]
 max_rounds = 3
 max_nits = 5
-external_cmd = "codex exec -s read-only --ephemeral -"   # different model family
+external_cmd = "codex exec -m gpt-6.2-sol -s read-only --ephemeral -"   # different model family, pinned
 
 [review.external_cmd_by_tool]
 codex = "claude -p --strict-mcp-config --tools Read,Grep,Glob"   # Claude reviews what Codex writes
